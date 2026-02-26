@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Amplifon — Behaviour Rating</title>
+<style>
+:root {
+  --red:#A50034; --red-d:#7A0026; --red-l:#FFF0F4;
+  --dark:#111; --mid:#555; --lite:#F6F5F3; --white:#FFF;
+  --green:#1B6B3A; --green-bg:#EAF4EE;
+  --amber:#92400E; --amber-bg:#FEF3C7;
+  --blue:#1A4A8A; --blue-bg:#EBF1FA;
+  --gold:#92400E; --gold-bg:#FEF3C7;
+  --border:#E4E2DE;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;background:var(--lite);color:var(--dark);min-height:100vh;font-size:15px;}
+.screen{display:none;} .screen.active{display:block;}
+
+/* topbar */
+.topbar{background:var(--red);position:sticky;top:0;z-index:200;box-shadow:0 2px 16px rgba(165,0,52,.28);}
+.topbar-inner{max-width:760px;margin:0 auto;padding:12px 20px;display:flex;align-items:center;justify-content:space-between;}
+.brand{font-family:Georgia,serif;font-size:18px;font-style:italic;color:white;}
+.topbar-sub{font-size:11px;color:rgba(255,255,255,.6);text-transform:uppercase;letter-spacing:1.5px;}
+.prog-bar{height:3px;background:rgba(255,255,255,.18);}
+.prog-fill{height:100%;background:rgba(255,255,255,.85);transition:width .35s;}
+
+/* wrap + card */
+.wrap{max-width:760px;margin:0 auto;padding:28px 20px 96px;}
+.card{background:white;border-radius:14px;box-shadow:0 1px 3px rgba(0,0,0,.07),0 6px 24px rgba(0,0,0,.06);overflow:hidden;margin-bottom:20px;}
+.card-hero{background:linear-gradient(135deg,var(--red) 0%,var(--red-d) 100%);padding:38px 34px;position:relative;overflow:hidden;}
+.card-hero::after{content:'';position:absolute;top:-50px;right:-50px;width:200px;height:200px;border-radius:50%;background:rgba(255,255,255,.05);}
+.hero-tag{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:rgba(255,255,255,.55);margin-bottom:10px;}
+.hero-title{font-family:Georgia,serif;font-size:30px;font-style:italic;color:white;line-height:1.2;margin-bottom:10px;}
+.hero-sub{font-size:14px;color:rgba(255,255,255,.75);line-height:1.6;max-width:440px;}
+.card-body{padding:30px 34px;}
+
+/* scales */
+.scale-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;}
+.scale-box{border:1px solid var(--border);border-radius:8px;padding:14px;}
+.scale-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--mid);margin-bottom:9px;}
+.scale-item{display:flex;align-items:center;gap:8px;margin-bottom:5px;font-size:13px;}
+.snum{width:21px;height:21px;border-radius:50%;background:var(--red);color:white;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;}
+.threshold{background:var(--lite);border-radius:8px;padding:13px 17px;font-size:13px;color:var(--mid);border-left:3px solid var(--red);margin-bottom:22px;line-height:1.6;}
+.threshold strong{color:var(--dark);}
+
+/* buttons */
+.btn{display:inline-flex;align-items:center;gap:7px;padding:12px 26px;border-radius:8px;border:none;font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;transition:all .16s;}
+.btn-red{background:var(--red);color:white;}
+.btn-red:hover{background:var(--red-d);transform:translateY(-1px);box-shadow:0 4px 14px rgba(165,0,52,.3);}
+.btn-dark{background:var(--dark);color:white;}
+.btn-dark:hover{background:#333;}
+.btn-outline{background:transparent;color:var(--red);border:1.5px solid var(--red);}
+.btn-outline:hover{background:var(--red-l);}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none!important;box-shadow:none!important;}
+.btn-full{width:100%;justify-content:center;}
+
+/* setup */
+.field-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--mid);margin-bottom:6px;}
+.txt-input{width:100%;padding:11px 14px;border:1.5px solid var(--border);border-radius:8px;font-family:inherit;font-size:14px;color:var(--dark);background:white;outline:none;transition:border-color .18s;margin-bottom:4px;}
+.txt-input:focus{border-color:var(--red);}
+.field-hint{font-size:12px;color:var(--mid);margin-bottom:16px;line-height:1.5;}
+.url-box{background:var(--lite);border:1.5px dashed var(--border);border-radius:8px;padding:14px 16px;font-family:'SF Mono',Consolas,'Courier New',monospace;font-size:12px;word-break:break-all;color:var(--dark);margin-bottom:12px;user-select:all;cursor:text;}
+.pill{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;}
+.pill-green{background:var(--green-bg);color:var(--green);}
+.gap-sm{height:8px;} .gap-md{height:16px;} hr{border:none;border-top:1px solid var(--border);margin:18px 0;}
+.txt-sm{font-size:13px;color:var(--mid);}
+.err{font-size:12px;color:#DC2626;display:none;margin-top:4px;}
+.ok-msg{font-size:12px;color:var(--green);display:none;margin-top:4px;}
+
+/* clusters / bcards */
+.cl-head{display:flex;align-items:center;gap:9px;margin:22px 0 10px;}
+.cl-pill{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.8px;padding:4px 11px;border-radius:20px;}
+.cl-bd{background:var(--blue-bg);color:var(--blue);}
+.cl-cc{background:var(--amber-bg);color:var(--amber);}
+.cl-po{background:var(--green-bg);color:var(--green);}
+.cl-tr{background:var(--gold-bg);color:var(--gold);font-weight:800;}
+.bcard{background:white;border:1px solid var(--border);border-radius:9px;padding:15px 17px;margin-bottom:8px;box-shadow:0 1px 3px rgba(0,0,0,.05);transition:border-color .15s;}
+.bcard:hover{border-color:#C8C4BE;}
+.bcard.is-tr{border-color:#D4A017;background:linear-gradient(to right,#FFFDF5,white);}
+.bcard.complete{border-color:#A7D7B5;}
+.bcard-top{display:flex;align-items:flex-start;gap:9px;margin-bottom:12px;}
+.bid{font-family:'SF Mono',Consolas,'Courier New',monospace;font-size:11px;font-weight:600;padding:3px 7px;border-radius:4px;flex-shrink:0;margin-top:1px;}
+.bid-bd{background:var(--blue-bg);color:var(--blue);}
+.bid-cc{background:var(--amber-bg);color:var(--amber);}
+.bid-po{background:var(--green-bg);color:var(--green);}
+.bid-tr{background:var(--gold-bg);color:var(--gold);}
+.btext{font-size:14px;line-height:1.45;flex:1;}
+.tr-tag{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#D4A017;display:block;margin-top:3px;}
+.rating-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;}
+.rg-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--mid);margin-bottom:5px;}
+.rbts{display:flex;gap:3px;}
+.rbt{flex:1;padding:8px 3px;border:1.5px solid var(--border);border-radius:6px;background:white;font-family:'SF Mono',Consolas,'Courier New',monospace;font-size:14px;font-weight:500;cursor:pointer;transition:all .13s;color:var(--mid);text-align:center;}
+.rbt:hover{border-color:var(--red);color:var(--red);background:var(--red-l);}
+.rbt.sel{background:var(--red);border-color:var(--red);color:white;box-shadow:0 2px 8px rgba(165,0,52,.22);}
+
+/* sticky footer */
+.sfooter{position:fixed;bottom:0;left:0;right:0;background:rgba(255,255,255,.96);backdrop-filter:blur(8px);border-top:1px solid var(--border);padding:12px 20px;z-index:100;}
+.sfooter-inner{max-width:760px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:14px;}
+.sfooter-info{font-size:13px;color:var(--mid);}
+.sfooter-info strong{color:var(--dark);}
+.dots{display:flex;gap:3px;flex-wrap:wrap;max-width:280px;margin-top:4px;}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--border);transition:background .2s;}
+.dot.done{background:var(--green);}
+.dot.partial{background:#F59E0B;}
+
+/* thank you */
+.ty-wrap{text-align:center;padding:56px 32px;}
+.ty-icon{font-size:52px;margin-bottom:18px;}
+.ty-title{font-family:Georgia,serif;font-size:26px;font-style:italic;color:var(--dark);margin-bottom:10px;}
+.ty-sub{font-size:15px;color:var(--mid);line-height:1.6;max-width:360px;margin:0 auto;}
+
+/* results */
+.results-hero{background:linear-gradient(135deg,var(--dark) 0%,#2D2D2D 100%);padding:28px 32px;}
+.results-title{font-family:Georgia,serif;font-size:24px;font-style:italic;color:white;margin-bottom:5px;}
+.results-meta{font-size:12px;color:rgba(255,255,255,.5);}
+.r-legend{display:flex;gap:16px;flex-wrap:wrap;padding:11px 22px;background:var(--lite);border-bottom:1px solid var(--border);}
+.r-leg-item{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--mid);}
+.r-leg-dot{width:9px;height:9px;border-radius:50%;}
+.r-hdr{display:grid;grid-template-columns:38px 50px 1fr 62px 68px 88px;gap:9px;align-items:center;padding:8px 20px;background:var(--lite);border-bottom:2px solid var(--border);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--mid);}
+.r-row{display:grid;grid-template-columns:38px 50px 1fr 62px 68px 88px;gap:9px;align-items:center;padding:12px 20px;border-bottom:1px solid var(--border);transition:background .13s;}
+.r-row:hover{background:#FAFAFA;}
+.r-row.gap{background:#FFF5F7;border-left:3px solid var(--red);}
+.r-row.gap:hover{background:#FEE8EE;}
+.r-row.well{opacity:.5;background:var(--green-bg);}
+.r-rank{font-family:'SF Mono',Consolas,'Courier New',monospace;font-size:13px;color:var(--mid);text-align:center;}
+.r-rank.gap{color:var(--red);font-weight:700;}
+.r-code{font-family:'SF Mono',Consolas,'Courier New',monospace;font-size:11px;padding:3px 6px;border-radius:4px;text-align:center;}
+.r-name{font-size:13px;line-height:1.4;}
+.r-tr-mark{color:#D4A017;font-weight:700;}
+.r-score{font-family:'SF Mono',Consolas,'Courier New',monospace;font-size:15px;font-weight:600;text-align:center;}
+.r-score.gap{color:var(--red);}
+.r-score.well{color:var(--green);}
+.r-bar-track{width:56px;height:6px;border-radius:3px;background:var(--border);overflow:hidden;}
+.r-bar-fill{height:100%;border-radius:3px;transition:width .5s;}
+.fill-gap{background:var(--red);}
+.fill-well{background:var(--green);}
+.r-tag{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;padding:3px 8px;border-radius:4px;white-space:nowrap;}
+.tag-comb{background:#FFEBEE;color:var(--red);}
+.tag-well{background:var(--green-bg);color:var(--green);}
+.tag-tr{background:var(--gold-bg);color:var(--gold);}
+.r-summary{display:flex;border-top:2px solid var(--border);}
+.r-stat{flex:1;text-align:center;padding:18px 10px;border-right:1px solid var(--border);}
+.r-stat:last-child{border-right:none;}
+.r-stat-num{font-family:Georgia,serif;font-size:28px;font-style:italic;display:block;margin-bottom:3px;}
+.r-stat-label{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--mid);}
+
+/* spinner */
+.spinner{width:28px;height:28px;border-radius:50%;border:3px solid rgba(165,0,52,.15);border-top-color:var(--red);animation:spin .7s linear infinite;margin:0 auto 10px;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.loading{text-align:center;padding:32px;color:var(--mid);font-size:14px;}
+
+/* vote counter */
+.vcounter{display:flex;align-items:center;gap:14px;background:var(--lite);border-radius:9px;padding:14px 18px;margin-bottom:16px;}
+.vcounter-num{font-family:Georgia,serif;font-size:34px;font-style:italic;color:var(--red);line-height:1;}
+.vcounter-lbl{font-size:11px;color:var(--mid);text-transform:uppercase;letter-spacing:1px;}
+
+/* instruction steps */
+.steps{counter-reset:step;}
+.step{display:flex;gap:14px;margin-bottom:18px;align-items:flex-start;}
+.step-num{width:28px;height:28px;border-radius:50%;background:var(--red);color:white;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0;margin-top:1px;}
+.step-body{font-size:14px;line-height:1.6;color:var(--dark);}
+.step-body strong{color:var(--dark);}
+.step-body code{font-family:'SF Mono',Consolas,'Courier New',monospace;background:var(--lite);padding:2px 6px;border-radius:4px;font-size:12px;color:var(--red);}
+
+@media(max-width:560px){
+  .scale-grid,.rating-grid{grid-template-columns:1fr;}
+  .r-hdr,.r-row{grid-template-columns:30px 42px 1fr 50px;}
+  .r-bar-track,.r-tag{display:none;}
+  .card-body,.card-hero{padding:22px 18px;}
+  .r-summary{flex-wrap:wrap;}
+  .r-stat{min-width:50%;}
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════
+  SCREEN: LANDING
+══════════════════════════ -->
+<div id="s-landing" class="screen active">
+  <div class="topbar"><div class="topbar-inner">
+    <div class="brand">Amplifon</div>
+    <div class="topbar-sub">Behaviour Diagnostic</div>
+  </div></div>
+  <div class="wrap">
+    <div class="card">
+      <div class="card-hero">
+        <div class="hero-tag">AM Great Profile — 19 Behaviours</div>
+        <div class="hero-title">Rate what<br>actually happens.</div>
+        <div class="hero-sub">Facilitator: set up your Google Sheet backend once, then share the voting link. Participants: open the link and vote.</div>
+      </div>
+      <div class="card-body">
+        <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:18px;">
+          <button class="btn btn-red btn-full" onclick="show('s-setup')">I am the Facilitator — set up</button>
+          <button class="btn btn-outline btn-full" onclick="show('s-voting-landing')">I am a Participant — vote</button>
+        </div>
+        <div class="txt-sm">If the facilitator sent you a direct link, just open that — it will take you straight to the voting form.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════
+  SCREEN: FACILITATOR SETUP
+══════════════════════════ -->
+<div id="s-setup" class="screen">
+  <div class="topbar"><div class="topbar-inner">
+    <div class="brand">Amplifon</div>
+    <div class="topbar-sub">Facilitator Setup</div>
+  </div></div>
+  <div class="wrap">
+    <div class="card">
+      <div class="card-hero">
+        <div class="hero-tag">One-time setup — ~5 minutes</div>
+        <div class="hero-title">Connect your<br>Google Sheet.</div>
+        <div class="hero-sub">Votes land directly in a Google Sheet you own. No third-party service, no accounts, nothing to break.</div>
+      </div>
+      <div class="card-body">
+        <div class="steps">
+          <div class="step"><div class="step-num">1</div><div class="step-body">Go to <strong>sheets.google.com</strong> and create a new blank spreadsheet. Name it <em>Amplifon Behaviour Votes</em>.</div></div>
+          <div class="step"><div class="step-num">2</div><div class="step-body">In the spreadsheet, click <strong>Extensions → Apps Script</strong>. Delete all code in the editor and paste the code from the box below exactly as it is.</div></div>
+          <div class="step"><div class="step-num">3</div><div class="step-body">Click <strong>Deploy → New deployment</strong>. Type: <code>Web app</code>. Execute as: <code>Me</code>. Who has access: <code>Anyone</code>. Click Deploy. Copy the Web App URL — it looks like <code>https://script.google.com/macros/s/ABC.../exec</code>.</div></div>
+          <div class="step"><div class="step-num">4</div><div class="step-body">Paste that URL in the field below. The app connects to your sheet and generates a voting link you share with participants.</div></div>
+        </div>
+
+        <hr>
+
+        <!-- Apps Script code block -->
+        <div class="field-label" style="margin-bottom:8px;">Apps Script code — paste this into the editor in Step 2</div>
+        <div style="position:relative;">
+          <pre id="apps-script-code" style="background:#1A1A1A;color:#66BB6A;border-radius:8px;padding:16px;font-family:'SF Mono',Consolas,'Courier New',monospace;font-size:11.5px;overflow-x:auto;line-height:1.6;max-height:220px;overflow-y:auto;white-space:pre;">const SHEET_NAME = 'Votes';
+
+function doPost(e) {
+  try {
+    const data = JSON.parse(e.postData.contents);
+    const ss = SpreadsheetApp.getActiveSpreadsheet();
+    let sheet = ss.getSheetByName(SHEET_NAME);
+    if (!sheet) {
+      sheet = ss.insertSheet(SHEET_NAME);
+      sheet.appendRow(['timestamp', 'votes_json']);
+    }
+    sheet.appendRow([new Date().toISOString(), JSON.stringify(data.votes)]);
+    return ContentService
+      .createTextOutput(JSON.stringify({ok: true}))
+      .setMimeType(ContentService.MimeType.JSON);
+  } catch(err) {
+    return ContentService
+      .createTextOutput(JSON.stringify({ok: false, error: err.message}))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+function doGet(e) {
+  try {
+    const ss = SpreadsheetApp.getActiveSpreadsheet();
+    const sheet = ss.getSheetByName(SHEET_NAME);
+    if (!sheet || sheet.getLastRow() < 2) {
+      return ContentService
+        .createTextOutput(JSON.stringify({ok: true, votes: []}))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+    const rows = sheet.getRange(2, 2, sheet.getLastRow() - 1, 1).getValues();
+    const votes = rows.map(r => JSON.parse(r[0]));
+    return ContentService
+      .createTextOutput(JSON.stringify({ok: true, votes: votes}))
+      .setMimeType(ContentService.MimeType.JSON);
+  } catch(err) {
+    return ContentService
+      .createTextOutput(JSON.stringify({ok: false, error: err.message}))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+}</pre>
+          <button class="btn btn-dark" onclick="copyScript()" id="copy-script-btn" style="position:absolute;top:10px;right:10px;padding:7px 14px;font-size:12px;">Copy</button>
+        </div>
+        <div class="ok-msg" id="script-copied">✓ Copied to clipboard</div>
+
+        <hr>
+
+        <div class="field-label">Your Google Apps Script Web App URL</div>
+        <input type="url" class="txt-input" id="script-url-input" placeholder="https://script.google.com/macros/s/ABC.../exec">
+        <div class="field-hint">Paste the URL from Step 3. It is saved in your browser so you only need to do this once.</div>
+        <div id="url-err" class="err">URL does not look right — it should start with https://script.google.com</div>
+
+        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+          <button class="btn btn-red" onclick="saveAndConnect()">Connect & generate voting link →</button>
+        </div>
+        <div class="gap-md"></div>
+
+        <div id="connected-section" style="display:none;">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+            <span class="pill pill-green">✓ Connected</span>
+          </div>
+          <div class="txt-sm" style="margin-bottom:8px;">Share this link with participants:</div>
+          <div class="url-box" id="voting-link-display"></div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <button class="btn btn-dark" onclick="copyVotingLink()">Copy voting link</button>
+            <button class="btn btn-red" onclick="show('s-dashboard')">Go to Results Dashboard →</button>
+          </div>
+          <div class="ok-msg" id="link-copied">✓ Link copied</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════
+  SCREEN: PARTICIPANT LANDING
+  (when no ?url param yet)
+══════════════════════════ -->
+<div id="s-voting-landing" class="screen">
+  <div class="topbar"><div class="topbar-inner">
+    <div class="brand">Amplifon</div>
+    <div class="topbar-sub">Participant — Enter session</div>
+  </div></div>
+  <div class="wrap">
+    <div class="card">
+      <div class="card-body" style="padding-top:36px;">
+        <p class="txt-sm" style="margin-bottom:14px;">The facilitator should have sent you a direct link. If you only have this file, ask the facilitator for the session link — it looks like this file's URL with <code style="font-family:monospace;background:var(--lite);padding:2px 5px;border-radius:4px;font-size:12px;color:var(--red);">?url=...</code> added at the end.</p>
+        <div class="field-label">Or paste the session URL here</div>
+        <input type="url" class="txt-input" id="manual-session-url" placeholder="https://...?url=https://script.google.com/...">
+        <div class="gap-sm"></div>
+        <button class="btn btn-red" onclick="loadFromManualUrl()">Open voting form →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════
+  SCREEN: VOTING
+══════════════════════════ -->
+<div id="s-voting" class="screen">
+  <div class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">Amplifon</div>
+      <div class="topbar-sub" id="v-prog-text">0 / 19 completed</div>
+    </div>
+    <div class="prog-bar"><div class="prog-fill" id="v-prog-fill" style="width:0%"></div></div>
+  </div>
+  <div class="wrap">
+    <div class="card">
+      <div class="card-body">
+        <div class="scale-grid">
+          <div class="scale-box">
+            <div class="scale-title">F — Frequency — how often</div>
+            <div class="scale-item"><span class="snum">1</span>Never — does not happen</div>
+            <div class="scale-item"><span class="snum">2</span>Rarely — only when forced</div>
+            <div class="scale-item"><span class="snum">3</span>Often — most store visits</div>
+            <div class="scale-item"><span class="snum">4</span>Always — every visit</div>
+          </div>
+          <div class="scale-box">
+            <div class="scale-title">Q — Quality — how well</div>
+            <div class="scale-item"><span class="snum">1</span>Poor — vague, no impact</div>
+            <div class="scale-item"><span class="snum">2</span>Low — weak structure</div>
+            <div class="scale-item"><span class="snum">3</span>Good — specific, concrete</div>
+            <div class="scale-item"><span class="snum">4</span>High — precise, visible impact</div>
+          </div>
+        </div>
+        <div class="threshold">
+          <strong>Threshold:</strong> combined score (F + Q) of <strong>7 or 8</strong> = done well. <strong>6 or below</strong> = gap → into COM-B analysis.
+        </div>
+      </div>
+    </div>
+    <div id="v-behaviours"></div>
+  </div>
+  <div class="sfooter"><div class="sfooter-inner">
+    <div class="sfooter-info">
+      Completed: <strong id="v-done-count">0</strong> / 19
+      <div class="dots" id="v-dots"></div>
+    </div>
+    <button class="btn btn-red" id="v-submit-btn" onclick="submitVotes()" disabled>Submit my votes →</button>
+  </div></div>
+</div>
+
+<!-- ══════════════════════════
+  SCREEN: THANK YOU
+══════════════════════════ -->
+<div id="s-thankyou" class="screen">
+  <div class="topbar"><div class="topbar-inner">
+    <div class="brand">Amplifon</div>
+    <div class="topbar-sub">Vote submitted</div>
+  </div></div>
+  <div class="wrap">
+    <div class="card">
+      <div class="ty-wrap">
+        <div class="ty-icon">✓</div>
+        <div class="ty-title">Vote submitted.</div>
+        <div class="ty-sub">Your ratings have been recorded. The facilitator will show the full ranking once everyone has voted. You can close this window.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════
+  SCREEN: DASHBOARD
+══════════════════════════ -->
+<div id="s-dashboard" class="screen">
+  <div class="topbar"><div class="topbar-inner">
+    <div class="brand">Amplifon</div>
+    <div class="topbar-sub">Facilitator — Results Dashboard</div>
+  </div></div>
+  <div class="wrap">
+    <div class="card">
+      <div class="card-body">
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:14px;">
+          <div class="vcounter">
+            <div class="vcounter-num" id="dash-count">—</div>
+            <div class="vcounter-lbl">votes collected</div>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <button class="btn btn-outline" onclick="refreshVotes()">↻ Refresh</button>
+            <button class="btn btn-red" id="calc-btn" onclick="calculateAndShow()" disabled>Calculate ranking →</button>
+          </div>
+        </div>
+        <div class="txt-sm" id="dash-refresh-time">Last refresh: —</div>
+        <div id="dash-spinner" class="loading" style="display:none;padding:14px 0;"><div class="spinner"></div>Loading votes…</div>
+        <div id="dash-err" class="err" style="margin-top:8px;">Could not reach the Google Sheet. Check your internet connection.</div>
+      </div>
+    </div>
+
+    <div id="results-panel" style="display:none;">
+      <div class="card">
+        <div class="results-hero">
+          <div class="results-title">Behaviour Ranking</div>
+          <div class="results-meta" id="r-meta">—</div>
+        </div>
+        <div class="r-legend">
+          <div class="r-leg-item"><div class="r-leg-dot" style="background:var(--red)"></div>Gap — below 7 → COM-B</div>
+          <div class="r-leg-item"><div class="r-leg-dot" style="background:#D4A017"></div>★ Transformation (PO6, PO7)</div>
+          <div class="r-leg-item"><div class="r-leg-dot" style="background:var(--green)"></div>Done well — 7 or 8</div>
+        </div>
+        <div>
+          <div class="r-hdr"><div>#</div><div>Code</div><div>Behaviour</div><div style="text-align:center">Score</div><div style="text-align:center">Bar</div><div>Status</div></div>
+          <div id="r-rows"></div>
+        </div>
+        <div class="r-summary" id="r-summary"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ════════════════════════════
+// DATA
+// ════════════════════════════
+const BEHAVIOURS = [
+  {id:'BD1',cat:'bd',short:'Takes responsibility of area results'},
+  {id:'BD2',cat:'bd',short:'Puts in place all actions to reach forecasted results'},
+  {id:'BD3',cat:'bd',short:'Manages budget and workforce planning'},
+  {id:'BD4',cat:'bd',short:'Continuous presence in store — data to insights'},
+  {id:'BD5',cat:'bd',short:'Matches commercial potential, critical thinking'},
+  {id:'BD6',cat:'bd',short:'Leads implementation of key sales initiatives'},
+  {id:'BD7',cat:'bd',short:'Spots and anticipates problems, provides insights'},
+  {id:'BD8',cat:'bd',short:'Guarantees smooth store operations'},
+  {id:'CC1',cat:'cc',short:'Role models customer orientation in store visits'},
+  {id:'CC2',cat:'cc',short:'Continuously reminds team of customer centricity'},
+  {id:'CC3',cat:'cc',short:'Cascades insights and trends across stores'},
+  {id:'CC4',cat:'cc',short:'Ensures aligned customer experience in the area'},
+  {id:'PO1',cat:'po',short:'Supports team in identifying winning behaviours'},
+  {id:'PO2',cat:'po',short:'Develops people through coaching and feedback'},
+  {id:'PO3',cat:'po',short:'Spots development needs, identifies training'},
+  {id:'PO4',cat:'po',short:'Guides team in stressful situations'},
+  {id:'PO5',cat:'po',short:'Creates culture of learning and results celebration'},
+  {id:'PO6',cat:'tr',short:'Enabler between Corporate/Country and stores',transf:true},
+  {id:'PO7',cat:'tr',short:'Builds network with ENTs, GPs, third parties',transf:true},
+];
+const CAT_LABELS={bd:'IS BUSINESS DRIVEN',cc:'IS CUSTOMER CENTERED',po:'IS PEOPLE ORIENTED',tr:'★ TRANSFORMATION'};
+const CAT_PILL={bd:'cl-bd',cc:'cl-cc',po:'cl-po',tr:'cl-tr'};
+const CAT_BID={bd:'bid-bd',cc:'bid-cc',po:'bid-po',tr:'bid-tr'};
+const CAT_COLORS={bd:'var(--blue)',cc:'var(--amber)',po:'var(--green)',tr:'#D4A017'};
+const CAT_BG={bd:'var(--blue-bg)',cc:'var(--amber-bg)',po:'var(--green-bg)',tr:'var(--gold-bg)'};
+
+let scriptUrl = '';
+let localRatings = {};
+let cachedVotes = [];
+
+// ════════════════════════════
+// ROUTING
+// ════════════════════════════
+function show(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+
+function init(){
+  const params = new URLSearchParams(window.location.search);
+  const urlParam = params.get('url');
+  const saved = localStorage.getItem('amplifon_script_url');
+
+  if(urlParam){
+    // Participant flow — url is the Google Script endpoint
+    scriptUrl = urlParam;
+    buildVotingUI();
+    show('s-voting');
+    return;
+  }
+  if(saved){
+    scriptUrl = saved;
+    const inp = document.getElementById('script-url-input');
+    if(inp) inp.value = saved;
+    // Show connected state on setup screen
+    showConnected(saved);
+  }
+}
+
+// ════════════════════════════
+// FACILITATOR SETUP
+// ════════════════════════════
+function copyScript(){
+  const code = document.getElementById('apps-script-code').textContent;
+  navigator.clipboard.writeText(code).then(()=>{
+    const btn = document.getElementById('copy-script-btn');
+    btn.textContent='✓ Copied';
+    const msg = document.getElementById('script-copied');
+    msg.style.display='block';
+    setTimeout(()=>{ btn.textContent='Copy'; msg.style.display='none'; },2500);
+  });
+}
+
+function saveAndConnect(){
+  const inp = document.getElementById('script-url-input');
+  const url = inp.value.trim();
+  const err = document.getElementById('url-err');
+  err.style.display='none';
+  if(!url.startsWith('https://script.google.com')){
+    err.style.display='block';
+    return;
+  }
+  scriptUrl = url;
+  localStorage.setItem('amplifon_script_url', url);
+  showConnected(url);
+}
+
+function showConnected(url){
+  const votingUrl = `${window.location.origin}${window.location.pathname}?url=${encodeURIComponent(url)}`;
+  const display = document.getElementById('voting-link-display');
+  if(display) display.textContent = votingUrl;
+  const section = document.getElementById('connected-section');
+  if(section) section.style.display='block';
+}
+
+function copyVotingLink(){
+  const url = document.getElementById('voting-link-display').textContent;
+  navigator.clipboard.writeText(url).then(()=>{
+    const msg = document.getElementById('link-copied');
+    msg.style.display='block';
+    setTimeout(()=>msg.style.display='none',2500);
+  });
+}
+
+// ════════════════════════════
+// PARTICIPANT — MANUAL URL
+// ════════════════════════════
+function loadFromManualUrl(){
+  const inp = document.getElementById('manual-session-url');
+  const val = inp.value.trim();
+  // Extract ?url= param from pasted full URL
+  try{
+    const u = new URL(val);
+    const extracted = u.searchParams.get('url');
+    if(extracted && extracted.startsWith('https://script.google.com')){
+      scriptUrl = extracted;
+      buildVotingUI();
+      show('s-voting');
+      return;
+    }
+  }catch(e){}
+  // Maybe they pasted just the script URL directly
+  if(val.startsWith('https://script.google.com')){
+    scriptUrl = val;
+    buildVotingUI();
+    show('s-voting');
+    return;
+  }
+  alert('Could not find a valid session URL. Ask the facilitator for the link.');
+}
+
+// ════════════════════════════
+// VOTING UI
+// ════════════════════════════
+function buildVotingUI(){
+  const container = document.getElementById('v-behaviours');
+  container.innerHTML='';
+  document.getElementById('v-dots').innerHTML =
+    BEHAVIOURS.map(b=>`<div class="dot" id="dot-${b.id}"></div>`).join('');
+
+  const clusters={};
+  BEHAVIOURS.forEach(b=>{ if(!clusters[b.cat])clusters[b.cat]=[]; clusters[b.cat].push(b); });
+
+  Object.entries(clusters).forEach(([cat,list])=>{
+    const sec=document.createElement('div');
+    sec.innerHTML=`<div class="cl-head"><span class="cl-pill ${CAT_PILL[cat]}">${CAT_LABELS[cat]}</span></div>`;
+    list.forEach(b=>{
+      const card=document.createElement('div');
+      card.className=`bcard${b.transf?' is-tr':''}`;
+      card.id=`bcard-${b.id}`;
+      card.innerHTML=`
+        <div class="bcard-top">
+          <span class="bid ${CAT_BID[b.cat]}">${b.id}</span>
+          <div>
+            <div class="btext">${b.short}</div>
+            ${b.transf?'<span class="tr-tag">★ Transformation</span>':''}
+          </div>
+        </div>
+        <div class="rating-grid">
+          <div>
+            <div class="rg-label">F — Frequency</div>
+            <div class="rbts">${[1,2,3,4].map(v=>`<button class="rbt" id="f-${b.id}-${v}" onclick="rate('${b.id}','f',${v})">${v}</button>`).join('')}</div>
+          </div>
+          <div>
+            <div class="rg-label">Q — Quality</div>
+            <div class="rbts">${[1,2,3,4].map(v=>`<button class="rbt" id="q-${b.id}-${v}" onclick="rate('${b.id}','q',${v})">${v}</button>`).join('')}</div>
+          </div>
+        </div>`;
+      sec.appendChild(card);
+    });
+    container.appendChild(sec);
+  });
+}
+
+function rate(id,dim,val){
+  if(!localRatings[id])localRatings[id]={};
+  localRatings[id][dim]=val;
+  [1,2,3,4].forEach(v=>{ const b=document.getElementById(`${dim}-${id}-${v}`); if(b)b.classList.toggle('sel',v===val); });
+  const r=localRatings[id];
+  if(r.f&&r.q)document.getElementById(`bcard-${id}`)?.classList.add('complete');
+  updateProgress();
+}
+
+function updateProgress(){
+  let done=0;
+  BEHAVIOURS.forEach(b=>{
+    const r=localRatings[b.id];
+    const ok=r&&r.f&&r.q, partial=r&&(r.f||r.q);
+    const dot=document.getElementById(`dot-${b.id}`);
+    if(dot){dot.classList.toggle('done',!!ok);dot.classList.toggle('partial',!ok&&!!partial);}
+    if(ok)done++;
+  });
+  document.getElementById('v-done-count').textContent=done;
+  document.getElementById('v-prog-text').textContent=`${done} / 19 completed`;
+  document.getElementById('v-prog-fill').style.width=`${(done/19)*100}%`;
+  document.getElementById('v-submit-btn').disabled=done<19;
+}
+
+// ════════════════════════════
+// SUBMIT
+// ════════════════════════════
+async function submitVotes(){
+  const btn=document.getElementById('v-submit-btn');
+  btn.disabled=true; btn.textContent='Submitting…';
+  const vote={};
+  BEHAVIOURS.forEach(b=>{ vote[b.id]=localRatings[b.id]; });
+  try{
+    await fetch(scriptUrl,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({votes:vote}),
+      mode:'no-cors' // Google Apps Script requires no-cors for POST from HTML files
+    });
+    show('s-thankyou');
+  }catch(e){
+    btn.disabled=false; btn.textContent='Submit my votes →';
+    alert('Could not submit. Please check your internet connection and try again.');
+  }
+}
+
+// ════════════════════════════
+// DASHBOARD
+// ════════════════════════════
+async function refreshVotes(){
+  const spinner=document.getElementById('dash-spinner');
+  const err=document.getElementById('dash-err');
+  const calcBtn=document.getElementById('calc-btn');
+  spinner.style.display='block'; err.style.display='none';
+  try{
+    const r=await fetch(scriptUrl+'?action=get');
+    const data=await r.json();
+    cachedVotes=data.votes||[];
+    document.getElementById('dash-count').textContent=cachedVotes.length;
+    document.getElementById('dash-refresh-time').textContent='Last refresh: '+new Date().toLocaleTimeString();
+    calcBtn.disabled=cachedVotes.length===0;
+  }catch(e){
+    err.style.display='block';
+    document.getElementById('dash-refresh-time').textContent='Refresh failed.';
+  }
+  spinner.style.display='none';
+}
+
+function calculateAndShow(){
+  const votes=cachedVotes; if(!votes.length)return;
+  const n=votes.length;
+  const results=BEHAVIOURS.map(b=>{
+    let sF=0,sQ=0;
+    votes.forEach(v=>{ sF+=(v[b.id]?.f||0); sQ+=(v[b.id]?.q||0); });
+    const avgF=sF/n, avgQ=sQ/n, combined=avgF+avgQ;
+    return{...b,avgF:Math.round(avgF*10)/10,avgQ:Math.round(avgQ*10)/10,combined:Math.round(combined*10)/10,isGap:combined<7};
+  }).sort((a,b)=>a.combined-b.combined);
+
+  const gapCount=results.filter(b=>b.isGap).length;
+  document.getElementById('r-meta').textContent=
+    `${n} participant${n!==1?'s':''}  ·  ${gapCount} behaviour${gapCount!==1?'s':''} below threshold  ·  Bottom 6 → Canvas COM-B`;
+
+  document.getElementById('r-rows').innerHTML=results.map((b,i)=>{
+    const isTop6=i<6&&b.isGap;
+    const rowCls=b.isGap?'gap':'well';
+    const rankCls=b.isGap?'gap':'';
+    const scoreCls=b.isGap?'gap':'well';
+    const pct=Math.round((b.combined/8)*100);
+    let tag='';
+    if(isTop6&&b.transf)tag=`<span class="r-tag tag-tr">★ COM-B</span>`;
+    else if(isTop6)tag=`<span class="r-tag tag-comb">→ COM-B</span>`;
+    else if(b.isGap)tag=`<span class="r-tag tag-comb" style="opacity:.5">Gap</span>`;
+    else tag=`<span class="r-tag tag-well">✓ Done well</span>`;
+    return`<div class="r-row ${rowCls}">
+      <div class="r-rank ${rankCls}">${i+1}</div>
+      <div class="r-code" style="background:${CAT_BG[b.cat]};color:${CAT_COLORS[b.cat]}">${b.id}</div>
+      <div class="r-name">${b.transf?'<span class="r-tr-mark">★ </span>':''}${b.short}</div>
+      <div class="r-score ${scoreCls}">${b.combined.toFixed(1)}</div>
+      <div><div class="r-bar-track"><div class="r-bar-fill ${b.isGap?'fill-gap':'fill-well'}" style="width:${pct}%"></div></div></div>
+      <div>${tag}</div>
+    </div>`;
+  }).join('');
+
+  const doneCount=results.filter(b=>!b.isGap).length;
+  const transfGap=results.filter(b=>b.isGap&&b.transf).length;
+  document.getElementById('r-summary').innerHTML=`
+    <div class="r-stat"><span class="r-stat-num" style="color:var(--red)">${gapCount}</span><span class="r-stat-label">Behaviours with gap</span></div>
+    <div class="r-stat"><span class="r-stat-num" style="color:var(--green)">${doneCount}</span><span class="r-stat-label">Done well (≥7)</span></div>
+    <div class="r-stat"><span class="r-stat-num" style="color:#D4A017">${transfGap}</span><span class="r-stat-label">Transformation gaps</span></div>
+    <div class="r-stat"><span class="r-stat-num">${n}</span><span class="r-stat-label">Participants</span></div>`;
+
+  document.getElementById('results-panel').style.display='block';
+  document.getElementById('results-panel').scrollIntoView({behavior:'smooth'});
+}
+
+window.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>
