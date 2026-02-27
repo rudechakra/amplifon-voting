@@ -1,1 +1,0 @@
-# amplifon-voting
