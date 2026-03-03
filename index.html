@@ -5,217 +5,230 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Amplifon — Behaviour Rating</title>
 <style>
-:root {
-  --red:#A50034; --red-d:#7A0026; --red-l:#FFF0F4;
-  --dark:#111; --mid:#555; --lite:#F6F5F3; --white:#FFF;
-  --green:#1B6B3A; --green-bg:#EAF4EE;
-  --amber:#92400E; --amber-bg:#FEF3C7;
-  --blue:#1A4A8A; --blue-bg:#EBF1FA;
-  --gold:#92400E; --gold-bg:#FEF3C7;
-  --border:#E4E2DE;
-}
-*{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;background:var(--lite);color:var(--dark);min-height:100vh;font-size:15px;}
-.screen{display:none;} .screen.active{display:block;}
-.topbar{background:var(--red);position:sticky;top:0;z-index:200;box-shadow:0 2px 16px rgba(165,0,52,.28);}
-.topbar-inner{max-width:760px;margin:0 auto;padding:12px 20px;display:flex;align-items:center;justify-content:space-between;}
-.brand{font-family:Georgia,serif;font-size:18px;font-style:italic;color:white;}
-.topbar-sub{font-size:11px;color:rgba(255,255,255,.6);text-transform:uppercase;letter-spacing:1.5px;}
-.prog-bar{height:3px;background:rgba(255,255,255,.18);}
-.prog-fill{height:100%;background:rgba(255,255,255,.85);transition:width .35s;}
-.wrap{max-width:760px;margin:0 auto;padding:28px 20px 96px;}
-.card{background:white;border-radius:14px;box-shadow:0 1px 3px rgba(0,0,0,.07),0 6px 24px rgba(0,0,0,.06);overflow:hidden;margin-bottom:20px;}
-.card-hero{background:linear-gradient(135deg,var(--red) 0%,var(--red-d) 100%);padding:38px 34px;position:relative;overflow:hidden;}
-.card-hero::after{content:'';position:absolute;top:-50px;right:-50px;width:200px;height:200px;border-radius:50%;background:rgba(255,255,255,.05);}
-.hero-tag{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:rgba(255,255,255,.55);margin-bottom:10px;}
-.hero-title{font-family:Georgia,serif;font-size:30px;font-style:italic;color:white;line-height:1.2;margin-bottom:10px;}
-.hero-sub{font-size:14px;color:rgba(255,255,255,.75);line-height:1.6;max-width:440px;}
-.card-body{padding:30px 34px;}
-.scale-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;}
-.scale-box{border:1px solid var(--border);border-radius:8px;padding:14px;}
-.scale-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--mid);margin-bottom:9px;}
-.scale-item{display:flex;align-items:center;gap:8px;margin-bottom:5px;font-size:13px;}
-.snum{width:21px;height:21px;border-radius:50%;background:var(--red);color:white;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;}
-.threshold{background:var(--lite);border-radius:8px;padding:13px 17px;font-size:13px;color:var(--mid);border-left:3px solid var(--red);margin-bottom:22px;line-height:1.6;}
-.threshold strong{color:var(--dark);}
-.btn{display:inline-flex;align-items:center;gap:7px;padding:12px 26px;border-radius:8px;border:none;font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;transition:all .16s;}
-.btn-red{background:var(--red);color:white;}
-.btn-red:hover{background:var(--red-d);transform:translateY(-1px);box-shadow:0 4px 14px rgba(165,0,52,.3);}
-.btn-dark{background:var(--dark);color:white;}
-.btn-dark:hover{background:#333;}
-.btn-outline{background:transparent;color:var(--red);border:1.5px solid var(--red);}
-.btn-outline:hover{background:var(--red-l);}
-.btn-danger{background:#7F1D1D;color:white;border:none;}
-.btn-danger:hover{background:#991B1B;}
-.btn:disabled{opacity:.4;cursor:not-allowed;transform:none!important;box-shadow:none!important;}
-.btn-full{width:100%;justify-content:center;}
-.field-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--mid);margin-bottom:6px;}
-.txt-input{width:100%;padding:11px 14px;border:1.5px solid var(--border);border-radius:8px;font-family:inherit;font-size:14px;color:var(--dark);background:white;outline:none;transition:border-color .18s;margin-bottom:4px;}
-.txt-input:focus{border-color:var(--red);}
-.field-hint{font-size:12px;color:var(--mid);margin-bottom:16px;line-height:1.5;}
-.url-box{background:var(--lite);border:1.5px dashed var(--border);border-radius:8px;padding:14px 16px;font-family:'SF Mono',Consolas,'Courier New',monospace;font-size:12px;word-break:break-all;color:var(--dark);margin-bottom:12px;user-select:all;cursor:text;}
-.pill{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;}
-.pill-green{background:var(--green-bg);color:var(--green);}
-.gap-sm{height:8px;} .gap-md{height:16px;}
-hr{border:none;border-top:1px solid var(--border);margin:18px 0;}
-.txt-sm{font-size:13px;color:var(--mid);}
-.err{font-size:12px;color:#DC2626;display:none;margin-top:4px;}
-.ok-msg{font-size:12px;color:var(--green);display:none;margin-top:4px;}
-.cl-head{display:flex;align-items:center;gap:9px;margin:22px 0 10px;}
-.cl-pill{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.8px;padding:4px 11px;border-radius:20px;}
-.cl-bd{background:var(--blue-bg);color:var(--blue);}
-.cl-cc{background:var(--amber-bg);color:var(--amber);}
-.cl-po{background:var(--green-bg);color:var(--green);}
-.cl-tr{background:var(--gold-bg);color:var(--gold);font-weight:800;}
-.bcard{background:white;border:1px solid var(--border);border-radius:9px;padding:15px 17px;margin-bottom:8px;box-shadow:0 1px 3px rgba(0,0,0,.05);transition:border-color .15s;}
-.bcard:hover{border-color:#C8C4BE;}
-.bcard.is-tr{border-color:#D4A017;background:linear-gradient(to right,#FFFDF5,white);}
-.bcard.complete{border-color:#A7D7B5;}
-.bcard-top{display:flex;align-items:flex-start;gap:9px;margin-bottom:12px;}
-.bid{font-family:'SF Mono',Consolas,'Courier New',monospace;font-size:11px;font-weight:600;padding:3px 7px;border-radius:4px;flex-shrink:0;margin-top:1px;}
-.bid-bd{background:var(--blue-bg);color:var(--blue);}
-.bid-cc{background:var(--amber-bg);color:var(--amber);}
-.bid-po{background:var(--green-bg);color:var(--green);}
-.bid-tr{background:var(--gold-bg);color:var(--gold);}
-.btext{font-size:14px;line-height:1.55;flex:1;}
-.tr-tag{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#D4A017;display:block;margin-top:3px;}
-.rating-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;}
-.rg-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--mid);margin-bottom:5px;}
-.rbts{display:flex;gap:3px;}
-.rbt{flex:1;padding:8px 3px;border:1.5px solid var(--border);border-radius:6px;background:white;font-family:'SF Mono',Consolas,'Courier New',monospace;font-size:14px;font-weight:500;cursor:pointer;transition:all .13s;color:var(--mid);text-align:center;}
-.rbt:hover{border-color:var(--red);color:var(--red);background:var(--red-l);}
-.rbt.sel{background:var(--red);border-color:var(--red);color:white;box-shadow:0 2px 8px rgba(165,0,52,.22);}
-.sfooter{position:fixed;bottom:0;left:0;right:0;background:rgba(255,255,255,.96);backdrop-filter:blur(8px);border-top:1px solid var(--border);padding:12px 20px;z-index:100;}
-.sfooter-inner{max-width:760px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:14px;}
-.sfooter-info{font-size:13px;color:var(--mid);}
-.sfooter-info strong{color:var(--dark);}
-.dots{display:flex;gap:3px;flex-wrap:wrap;max-width:280px;margin-top:4px;}
-.dot{width:8px;height:8px;border-radius:50%;background:var(--border);transition:background .2s;}
-.dot.done{background:var(--green);}
-.dot.partial{background:#F59E0B;}
-.ty-wrap{text-align:center;padding:56px 32px;}
-.ty-icon{font-size:52px;margin-bottom:18px;}
-.ty-title{font-family:Georgia,serif;font-size:26px;font-style:italic;color:var(--dark);margin-bottom:10px;}
-.ty-sub{font-size:15px;color:var(--mid);line-height:1.6;max-width:360px;margin:0 auto;}
-.results-hero{background:linear-gradient(135deg,var(--dark) 0%,#2D2D2D 100%);padding:28px 32px;}
-.results-title{font-family:Georgia,serif;font-size:24px;font-style:italic;color:white;margin-bottom:5px;}
-.results-meta{font-size:12px;color:rgba(255,255,255,.5);}
-.r-legend{display:flex;gap:16px;flex-wrap:wrap;padding:11px 22px;background:var(--lite);border-bottom:1px solid var(--border);}
-.r-leg-item{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--mid);}
-.r-leg-dot{width:9px;height:9px;border-radius:50%;}
-.r-hdr{display:grid;grid-template-columns:38px 50px 1fr 62px 68px 88px;gap:9px;align-items:center;padding:8px 20px;background:var(--lite);border-bottom:2px solid var(--border);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--mid);}
-.r-row{display:grid;grid-template-columns:38px 50px 1fr 62px 68px 88px;gap:9px;align-items:center;padding:12px 20px;border-bottom:1px solid var(--border);transition:background .13s;}
-.r-row:hover{background:#FAFAFA;}
-.r-row.gap{background:#FFF5F7;border-left:3px solid var(--red);}
-.r-row.gap:hover{background:#FEE8EE;}
-.r-row.well{opacity:.5;background:var(--green-bg);}
-.r-rank{font-family:'SF Mono',Consolas,'Courier New',monospace;font-size:13px;color:var(--mid);text-align:center;}
-.r-rank.gap{color:var(--red);font-weight:700;}
-.r-code{font-family:'SF Mono',Consolas,'Courier New',monospace;font-size:11px;padding:3px 6px;border-radius:4px;text-align:center;}
-.r-name{font-size:13px;line-height:1.4;}
-.r-tr-mark{color:#D4A017;font-weight:700;}
-.r-score{font-family:'SF Mono',Consolas,'Courier New',monospace;font-size:15px;font-weight:600;text-align:center;}
-.r-score.gap{color:var(--red);}
-.r-score.well{color:var(--green);}
-.r-bar-track{width:56px;height:6px;border-radius:3px;background:var(--border);overflow:hidden;}
-.r-bar-fill{height:100%;border-radius:3px;transition:width .5s;}
-.fill-gap{background:var(--red);}
-.fill-well{background:var(--green);}
-.r-tag{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;padding:3px 8px;border-radius:4px;white-space:nowrap;}
-.tag-comb{background:#FFEBEE;color:var(--red);}
-.tag-well{background:var(--green-bg);color:var(--green);}
-.tag-tr{background:var(--gold-bg);color:var(--gold);}
-.r-summary{display:flex;border-top:2px solid var(--border);}
-.r-stat{flex:1;text-align:center;padding:18px 10px;border-right:1px solid var(--border);}
-.r-stat:last-child{border-right:none;}
-.r-stat-num{font-family:Georgia,serif;font-size:28px;font-style:italic;display:block;margin-bottom:3px;}
-.r-stat-label{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--mid);}
-.spinner{width:28px;height:28px;border-radius:50%;border:3px solid rgba(165,0,52,.15);border-top-color:var(--red);animation:spin .7s linear infinite;margin:0 auto 10px;}
-@keyframes spin{to{transform:rotate(360deg);}}
-.loading{text-align:center;padding:32px;color:var(--mid);font-size:14px;}
-.vcounter{display:flex;align-items:center;gap:14px;background:var(--lite);border-radius:9px;padding:14px 18px;margin-bottom:16px;}
-.vcounter-num{font-family:Georgia,serif;font-size:34px;font-style:italic;color:var(--red);line-height:1;}
-.vcounter-lbl{font-size:11px;color:var(--mid);text-transform:uppercase;letter-spacing:1px;}
-.steps{counter-reset:step;}
-.step{display:flex;gap:14px;margin-bottom:18px;align-items:flex-start;}
-.step-num{width:28px;height:28px;border-radius:50%;background:var(--red);color:white;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0;margin-top:1px;}
-.step-body{font-size:14px;line-height:1.6;color:var(--dark);}
-.step-body strong{color:var(--dark);}
-.step-body code{font-family:'SF Mono',Consolas,'Courier New',monospace;background:var(--lite);padding:2px 6px;border-radius:4px;font-size:12px;color:var(--red);}
-/* Reset modal */
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:500;display:none;align-items:center;justify-content:center;padding:20px;}
-.modal-overlay.open{display:flex;}
-.modal{background:white;border-radius:14px;padding:32px 28px;max-width:420px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.22);}
-.modal-icon{font-size:36px;margin-bottom:14px;}
-.modal h3{font-family:Georgia,serif;font-size:20px;font-style:italic;margin-bottom:8px;}
-.modal p{font-size:14px;color:var(--mid);line-height:1.6;margin-bottom:8px;}
-.modal-warning{background:#FEF3C7;border:1px solid #FCD34D;border-radius:8px;padding:11px 14px;font-size:13px;color:#92400E;margin:14px 0 22px;line-height:1.5;}
-.modal-actions{display:flex;gap:10px;justify-content:flex-end;}
-.reset-feedback{font-size:13px;margin-top:14px;padding:10px 14px;border-radius:8px;display:none;}
-.reset-ok{background:var(--green-bg);color:var(--green);border:1px solid #A7D7B5;}
-.reset-err{background:#FFF0F0;color:#9B1C1C;border:1px solid #FECACA;}
-@media(max-width:560px){
-  .scale-grid,.rating-grid{grid-template-columns:1fr;}
-  .r-hdr,.r-row{grid-template-columns:30px 42px 1fr 50px;}
-  .r-bar-track,.r-tag{display:none;}
-  .card-body,.card-hero{padding:22px 18px;}
-  .r-summary{flex-wrap:wrap;}
-  .r-stat{min-width:50%;}
-}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#F5F4F2;color:#1C1C1C;min-height:100vh}
+a{color:inherit;text-decoration:none}
+button{cursor:pointer;font-family:inherit}
+.shell{min-height:100vh;display:flex;flex-direction:column}
+.topbar{background:#C0002E;color:#fff;padding:14px 28px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 10px rgba(192,0,46,.3)}
+.topbar-brand{display:flex;align-items:center;gap:12px}
+.topbar-logo{font-size:1.1rem;font-weight:700;letter-spacing:.06em}
+.topbar-sub{font-size:.75rem;opacity:.75;margin-top:1px}
+.topbar-right{display:flex;gap:8px}
+.btn{padding:9px 18px;border-radius:4px;font-size:.82rem;font-weight:600;border:none;transition:all .15s;letter-spacing:.02em}
+.btn-primary{background:#C0002E;color:#fff}
+.btn-primary:hover{background:#a00026}
+.btn-outline{background:transparent;color:#fff;border:1.5px solid rgba(255,255,255,.55)}
+.btn-outline:hover{background:rgba(255,255,255,.12)}
+.btn-light{background:#fff;color:#C0002E;border:1.5px solid #E8E6E4}
+.btn-light:hover{background:#fdf0f3;border-color:#C0002E}
+.btn-danger{background:#7F1D1D;color:#fff;border:none}
+.btn-danger:hover{background:#991B1B}
+.btn-ghost{background:transparent;color:#5C5C5C;border:1.5px solid #E2E0DE}
+.btn-ghost:hover{border-color:#C0002E;color:#C0002E}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn-sm{padding:7px 14px;font-size:.78rem}
+.btn-full{width:100%}
+.page{display:none;flex:1}
+.page.active{display:flex;flex-direction:column}
+.landing-hero{background:#C0002E;color:#fff;padding:64px 28px 52px;text-align:center}
+.landing-hero h1{font-size:2rem;font-weight:700;margin-bottom:8px;letter-spacing:-.01em}
+.landing-hero p{font-size:1rem;opacity:.8;max-width:440px;margin:0 auto 32px;line-height:1.6}
+.landing-sub{font-size:.8rem;opacity:.6;margin-top:10px;max-width:400px;margin-left:auto;margin-right:auto}
+.landing-cards{display:flex;gap:16px;max-width:640px;margin:0 auto;padding:36px 20px 60px;flex-wrap:wrap}
+.landing-card{flex:1;min-width:240px;background:#fff;border-radius:8px;border:1.5px solid #E2E0DE;padding:28px 24px;cursor:pointer;transition:all .15s}
+.landing-card:hover{border-color:#C0002E;box-shadow:0 4px 20px rgba(192,0,46,.12)}
+.landing-card-icon{width:40px;height:40px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;margin-bottom:14px}
+.icon-red{background:#FEE2E8}
+.icon-teal{background:#D1FAF5}
+.landing-card h2{font-size:1rem;font-weight:700;margin-bottom:6px}
+.landing-card p{font-size:.82rem;color:#5C5C5C;line-height:1.5}
+.setup-body{max-width:720px;margin:0 auto;padding:36px 24px 60px;width:100%}
+.setup-title{font-size:1.5rem;font-weight:700;margin-bottom:4px}
+.setup-subtitle{font-size:.88rem;color:#5C5C5C;margin-bottom:32px}
+.step-card{background:#fff;border-radius:8px;border:1.5px solid #E2E0DE;margin-bottom:16px;overflow:hidden}
+.step-head{display:flex;align-items:flex-start;gap:14px;padding:20px 22px}
+.step-num{min-width:28px;height:28px;border-radius:50%;background:#C0002E;color:#fff;font-size:.8rem;font-weight:700;display:flex;align-items:center;justify-content:center;margin-top:1px}
+.step-content{flex:1}
+.step-content h3{font-size:.95rem;font-weight:700;margin-bottom:4px}
+.step-content p{font-size:.84rem;color:#5C5C5C;line-height:1.55}
+.code-block{margin:0 22px 22px;background:#1C1C1C;border-radius:6px;overflow:hidden}
+.code-header{display:flex;justify-content:space-between;align-items:center;padding:10px 16px;background:#2A2A2A}
+.code-label{font-size:.72rem;color:#888;font-weight:600;letter-spacing:.06em;text-transform:uppercase}
+.code-copy-btn{background:transparent;border:1px solid #444;color:#ccc;padding:5px 12px;border-radius:4px;font-size:.75rem;cursor:pointer}
+.code-copy-btn:hover{background:#333;color:#fff}
+.code-body{padding:16px;overflow-x:auto;max-height:220px;overflow-y:auto}
+.code-body pre{font-family:'SF Mono','Fira Code',monospace;font-size:.78rem;color:#E2E2E2;white-space:pre;line-height:1.6}
+.url-input-row{display:flex;gap:10px;margin-top:12px}
+.url-input{flex:1;padding:10px 14px;border-radius:4px;border:1.5px solid #E2E0DE;font-size:.88rem;font-family:inherit}
+.url-input:focus{outline:none;border-color:#C0002E}
+.url-input.error{border-color:#EF4444}
+.url-error{font-size:.78rem;color:#EF4444;margin-top:6px}
+.url-success{font-size:.78rem;color:#166534;margin-top:6px;font-weight:600}
+.share-box{background:#F0FDF4;border:1.5px solid #BBF7D0;border-radius:6px;padding:16px 18px;margin-top:16px}
+.share-box-label{font-size:.72rem;font-weight:700;color:#166534;letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px}
+.share-link-row{display:flex;gap:8px;align-items:center}
+.share-link{flex:1;font-size:.8rem;color:#1C1C1C;background:#fff;border:1px solid #BBF7D0;border-radius:4px;padding:8px 12px;word-break:break-all;line-height:1.4}
+.dashboard-link-row{margin-top:12px;display:flex;justify-content:flex-end}
+.entry-body{max-width:540px;margin:0 auto;padding:48px 24px;width:100%;text-align:center}
+.entry-body h2{font-size:1.4rem;font-weight:700;margin-bottom:8px}
+.entry-body p{font-size:.88rem;color:#5C5C5C;margin-bottom:28px;line-height:1.6}
+.entry-url-row{display:flex;gap:10px;margin-top:20px;text-align:left}
+.vote-header{background:#fff;border-bottom:1px solid #E2E0DE;padding:14px 28px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.progress-wrap{flex:1;min-width:160px}
+.progress-label{font-size:.75rem;color:#5C5C5C;margin-bottom:5px}
+.progress-bar{height:6px;background:#E2E0DE;border-radius:3px;overflow:hidden}
+.progress-fill{height:100%;background:#C0002E;border-radius:3px;transition:width .3s}
+.progress-count{font-size:.75rem;color:#C0002E;font-weight:700;margin-top:4px}
+.vote-body{max-width:820px;margin:0 auto;padding:28px 20px 60px;width:100%}
+.scale-legend{background:#fff;border:1px solid #E2E0DE;border-radius:8px;padding:16px 20px;margin-bottom:28px;display:flex;gap:28px;flex-wrap:wrap}
+.legend-col{flex:1;min-width:180px}
+.legend-title{font-size:.7rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#5C5C5C;margin-bottom:8px}
+.legend-row{display:flex;gap:8px;align-items:baseline;margin-bottom:4px}
+.legend-num{font-size:.82rem;font-weight:700;color:#C0002E;min-width:16px}
+.legend-desc{font-size:.8rem;color:#3C3C3C}
+.legend-note{font-size:.75rem;color:#5C5C5C;margin-top:10px;padding-top:10px;border-top:1px solid #E2E0DE;line-height:1.5}
+.legend-note strong{color:#1C1C1C}
+.cluster-divider{display:flex;align-items:center;gap:12px;margin:24px 0 12px}
+.cluster-pill{font-size:.65rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:4px 11px;border-radius:20px;white-space:nowrap}
+.pill-bd{background:#C0002E;color:#fff}
+.pill-cc{background:#007C6E;color:#fff}
+.pill-po{background:#1A4A8A;color:#fff}
+.cluster-line{flex:1;height:1px;background:#E2E0DE}
+.bcard{background:#fff;border-radius:6px;border:1.5px solid #E2E0DE;padding:18px 20px;margin-bottom:10px;transition:border-color .15s}
+.bcard.rated{border-color:#C0002E;border-left-width:3px}
+.bcard.important{background:#FEF2F4;border-color:#E8A0AD;border-left:3px solid #C0002E}
+.bcard.important .bcard-id{color:#C0002E}
+.bcard-top{display:flex;align-items:flex-start;gap:12px}
+.bcard-id{font-size:.68rem;font-weight:700;color:#999;min-width:36px;padding-top:2px;letter-spacing:.04em}
+.bcard-text{flex:1;font-size:.88rem;line-height:1.6;color:#1C1C1C}
+.bcard-transf{display:inline-block;font-size:.62rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;background:#FEF3E2;color:#854D0E;border:1px solid #FCD34D;padding:3px 8px;border-radius:3px;margin-left:8px;vertical-align:middle;white-space:nowrap}
+.bcard-scales{display:flex;gap:24px;margin-top:14px;padding-top:12px;border-top:1px solid #F0EFED;flex-wrap:wrap}
+.scale-group{display:flex;flex-direction:column;gap:6px}
+.scale-group-label{font-size:.68rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:#5C5C5C}
+.scale-btns{display:flex;gap:5px}
+.sbtn{width:40px;height:34px;border-radius:4px;border:1.5px solid #E2E0DE;background:#fff;font-size:.85rem;font-weight:600;color:#5C5C5C;transition:all .12s;display:flex;align-items:center;justify-content:center}
+.sbtn:hover{border-color:#C0002E;color:#C0002E;background:#fdf0f3}
+.sbtn.sel{background:#C0002E;border-color:#C0002E;color:#fff}
+.vote-submit-row{margin-top:28px;display:flex;flex-direction:column;align-items:center;gap:10px}
+.vote-submit-note{font-size:.78rem;color:#5C5C5C}
+.submitted-body{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;padding:60px 24px;text-align:center}
+.submitted-icon{width:64px;height:64px;border-radius:50%;background:#F0FDF4;border:2px solid #BBF7D0;display:flex;align-items:center;justify-content:center;font-size:1.8rem;margin-bottom:20px}
+.submitted-body h2{font-size:1.4rem;font-weight:700;margin-bottom:8px}
+.submitted-body p{font-size:.88rem;color:#5C5C5C;max-width:360px;line-height:1.6}
+.results-body{max-width:900px;margin:0 auto;padding:28px 20px 60px;width:100%}
+.results-top{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:24px}
+.results-title{font-size:1.3rem;font-weight:700}
+.results-meta{font-size:.82rem;color:#5C5C5C;margin-top:2px}
+.results-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.results-legend{display:flex;gap:16px;margin-bottom:16px;flex-wrap:wrap}
+.rleg-item{display:flex;align-items:center;gap:6px;font-size:.78rem;color:#5C5C5C}
+.rleg-dot{width:10px;height:10px;border-radius:2px}
+.dot-gap{background:#C0002E}
+.dot-transf{background:#854D0E;border:1px solid #FCD34D}
+.dot-ok{background:#166534}
+.rtable{width:100%;border-collapse:collapse;background:#fff;border-radius:8px;overflow:hidden;border:1px solid #E2E0DE;font-size:.84rem}
+.rtable thead tr{background:#1C1C1C}
+.rtable th{padding:11px 14px;text-align:left;font-size:.68rem;letter-spacing:.07em;text-transform:uppercase;color:#fff;font-weight:600}
+.rtable td{padding:11px 14px;border-bottom:1px solid #F0EFED;vertical-align:middle}
+.rtable tr:last-child td{border-bottom:none}
+.rtable tr.row-gap{background:#FEF2F2}
+.rtable tr.row-transf td:first-child{border-left:3px solid #854D0E}
+.rtable tr.row-ok{background:#F0FDF4}
+.rank-num{font-size:.8rem;font-weight:700;color:#999;min-width:24px}
+.bcode{font-size:.72rem;font-weight:700;color:#5C5C5C;letter-spacing:.04em}
+.btext-cell{font-size:.83rem;line-height:1.45;color:#1C1C1C}
+.score-badge{display:inline-block;font-weight:700;font-size:.9rem;min-width:28px;text-align:center}
+.badge-gap{color:#C0002E}
+.badge-ok{color:#166534}
+.bar-wrap{min-width:80px;max-width:120px}
+.bar-inner{height:8px;border-radius:4px;background:#E2E0DE;overflow:hidden}
+.bar-fill{height:100%;border-radius:4px;background:#C0002E;transition:width .4s}
+.bar-fill.green{background:#166534}
+.status-pill{font-size:.68rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:3px 8px;border-radius:3px;white-space:nowrap}
+.status-gap{background:#FEE2E8;color:#9F1239}
+.status-transf{background:#FEF3E2;color:#854D0E}
+.status-ok{background:#DCFCE7;color:#166534}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:500;display:none;align-items:center;justify-content:center;padding:20px}
+.modal-overlay.open{display:flex}
+.modal{background:#fff;border-radius:10px;padding:32px 28px;max-width:440px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.2)}
+.modal-icon{width:48px;height:48px;border-radius:50%;background:#FEE2E8;display:flex;align-items:center;justify-content:center;font-size:1.4rem;margin-bottom:16px}
+.modal h3{font-size:1.1rem;font-weight:700;margin-bottom:8px}
+.modal p{font-size:.86rem;color:#5C5C5C;line-height:1.6;margin-bottom:6px}
+.modal-warning{background:#FEF3E2;border:1px solid #FCD34D;border-radius:5px;padding:10px 14px;font-size:.82rem;color:#854D0E;margin:14px 0 20px;line-height:1.5}
+.modal-actions{display:flex;gap:10px;justify-content:flex-end}
+.reset-status{font-size:.82rem;margin-top:12px;padding:8px 12px;border-radius:4px;display:none}
+.reset-ok{background:#F0FDF4;color:#166534;border:1px solid #BBF7D0}
+.reset-err{background:#FEF2F2;color:#991B1B;border:1px solid #FECACA}
 </style>
 </head>
 <body>
+<div class="shell">
 
-<!-- LANDING -->
-<div id="s-landing" class="screen active">
-  <div class="topbar"><div class="topbar-inner"><div class="brand">Amplifon</div><div class="topbar-sub">Behaviour Diagnostic</div></div></div>
-  <div class="wrap">
-    <div class="card">
-      <div class="card-hero">
-        <div class="hero-tag">AM Great Profile — 19 Behaviours</div>
-        <div class="hero-title">Rate what<br>actually happens.</div>
-        <div class="hero-sub">Facilitator: set up your Google Sheet backend once, then share the voting link. Participants: open the link and vote.</div>
-      </div>
-      <div class="card-body">
-        <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:18px;">
-          <button class="btn btn-red btn-full" onclick="show('s-setup')">I am the Facilitator — set up</button>
-          <button class="btn btn-outline btn-full" onclick="show('s-voting-landing')">I am a Participant — vote</button>
-        </div>
-        <div class="txt-sm">If the facilitator sent you a direct link, just open that — it will take you straight to the voting form.</div>
-      </div>
+<div class="topbar">
+  <div class="topbar-brand">
+    <div>
+      <div class="topbar-logo">amplifon</div>
+      <div class="topbar-sub">Behaviour Diagnostic</div>
     </div>
   </div>
+  <div class="topbar-right" id="topbarRight"></div>
 </div>
 
-<!-- FACILITATOR SETUP -->
-<div id="s-setup" class="screen">
-  <div class="topbar"><div class="topbar-inner"><div class="brand">Amplifon</div><div class="topbar-sub">Facilitator Setup</div></div></div>
-  <div class="wrap">
-    <div class="card">
-      <div class="card-hero">
-        <div class="hero-tag">One-time setup — ~5 minutes</div>
-        <div class="hero-title">Connect your<br>Google Sheet.</div>
-        <div class="hero-sub">Votes land directly in a Google Sheet you own. No third-party service, no accounts, nothing to break.</div>
-      </div>
-      <div class="card-body">
-        <div class="steps">
-          <div class="step"><div class="step-num">1</div><div class="step-body">Go to <strong>sheets.google.com</strong> and create a new blank spreadsheet. Name it <em>Amplifon Behaviour Votes</em>.</div></div>
-          <div class="step"><div class="step-num">2</div><div class="step-body">In the spreadsheet, click <strong>Extensions → Apps Script</strong>. Delete all code in the editor and paste the code from the box below exactly as it is.</div></div>
-          <div class="step"><div class="step-num">3</div><div class="step-body">Click <strong>Deploy → New deployment</strong>. Type: <code>Web app</code>. Execute as: <code>Me</code>. Who has access: <code>Anyone</code>. Click Deploy. Copy the Web App URL — it looks like <code>https://script.google.com/macros/s/ABC.../exec</code>.</div></div>
-          <div class="step"><div class="step-num">4</div><div class="step-body">Paste that URL in the field below. The app connects to your sheet and generates a voting link you share with participants.</div></div>
+<div class="page active" id="pageLanding">
+  <div class="landing-hero">
+    <h1>AM Great Profile — 19 Behaviours</h1>
+    <p>Rate what&nbsp; actually happens.</p>
+    <div class="landing-sub">Facilitator: set up your Google Sheet backend once, then share the voting link. Participants: open the link and vote.</div>
+  </div>
+  <div class="landing-cards">
+    <div class="landing-card" onclick="showPage('pageSetup')">
+      <div class="landing-card-icon icon-red">⚙</div>
+      <h2>I am the Facilitator — set up</h2>
+      <p>Connect a Google Sheet, generate the participant voting link, and access the results dashboard.</p>
+    </div>
+    <div class="landing-card" onclick="showPage('pageEntry')">
+      <div class="landing-card-icon icon-teal">✔</div>
+      <h2>I am a Participant — vote</h2>
+      <p>Rate all 19 behaviours on Frequency and Quality. Anonymous. Takes about 5 minutes.</p>
+    </div>
+  </div>
+  <div style="text-align:center;padding:0 24px 40px;font-size:.78rem;color:#999">If the facilitator sent you a direct link, just open that — it will take you straight to the voting form.</div>
+</div>
+
+<div class="page" id="pageSetup">
+  <div class="setup-body">
+    <div class="setup-title">Facilitator Setup</div>
+    <div class="setup-subtitle">One-time setup — ~5 minutes</div>
+    <div class="step-card">
+      <div class="step-head">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <h3>Create a Google Sheet</h3>
+          <p>Go to <strong>sheets.google.com</strong> and create a new blank spreadsheet. Name it <em>Amplifon Behaviour Votes</em>.</p>
         </div>
-        <hr>
-        <div class="field-label" style="margin-bottom:8px;">Apps Script code — paste this into the editor in Step 2</div>
-        <div style="position:relative;">
-          <pre id="apps-script-code" style="background:#1A1A1A;color:#66BB6A;border-radius:8px;padding:16px;font-family:'SF Mono',Consolas,'Courier New',monospace;font-size:11.5px;overflow-x:auto;line-height:1.6;max-height:260px;overflow-y:auto;white-space:pre;">const SHEET_NAME = 'Votes';
+      </div>
+    </div>
+    <div class="step-card">
+      <div class="step-head">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <h3>Add the Apps Script</h3>
+          <p>In the spreadsheet, click <strong>Extensions → Apps Script</strong>. Delete all existing code and paste the code below exactly as it is.</p>
+        </div>
+      </div>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-label">Apps Script — paste this into the editor in Step 2</span>
+          <button class="code-copy-btn" onclick="copyCode()">Copy</button>
+        </div>
+        <div class="code-body"><pre id="appsScriptCode">const SHEET_NAME = 'Votes';
 
 function doPost(e) {
   try {
     const data = JSON.parse(e.postData.contents);
-    const ss = SpreadsheetApp.getActiveSpreadsheet();
-
-    // RESET — deletes all vote rows, keeps header intact
     if (data.action === 'reset') {
+      const ss = SpreadsheetApp.getActiveSpreadsheet();
       const sheet = ss.getSheetByName(SHEET_NAME);
       if (sheet && sheet.getLastRow() > 1) {
         sheet.deleteRows(2, sheet.getLastRow() - 1);
@@ -224,8 +237,7 @@ function doPost(e) {
         .createTextOutput(JSON.stringify({ ok: true, action: 'reset' }))
         .setMimeType(ContentService.MimeType.JSON);
     }
-
-    // SUBMIT vote
+    const ss = SpreadsheetApp.getActiveSpreadsheet();
     let sheet = ss.getSheetByName(SHEET_NAME);
     if (!sheet) {
       sheet = ss.insertSheet(SHEET_NAME);
@@ -235,7 +247,6 @@ function doPost(e) {
     return ContentService
       .createTextOutput(JSON.stringify({ ok: true }))
       .setMimeType(ContentService.MimeType.JSON);
-
   } catch(err) {
     return ContentService
       .createTextOutput(JSON.stringify({ ok: false, error: err.message }))
@@ -262,455 +273,476 @@ function doGet(e) {
       .createTextOutput(JSON.stringify({ ok: false, error: err.message }))
       .setMimeType(ContentService.MimeType.JSON);
   }
-}</pre>
-          <button class="btn btn-dark" onclick="copyScript()" id="copy-script-btn" style="position:absolute;top:10px;right:10px;padding:7px 14px;font-size:12px;">Copy</button>
+}</pre></div>
+      </div>
+    </div>
+    <div class="step-card">
+      <div class="step-head">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <h3>Deploy as a Web App</h3>
+          <p>Click <strong>Deploy → New deployment</strong>. Type: <em>Web app</em>. Execute as: <em>Me</em>. Who has access: <em>Anyone</em>. Click Deploy. Copy the Web App URL.</p>
         </div>
-        <div class="ok-msg" id="script-copied">✓ Copied to clipboard</div>
-        <hr>
-        <div class="field-label">Your Google Apps Script Web App URL</div>
-        <input type="url" class="txt-input" id="script-url-input" placeholder="https://script.google.com/macros/s/ABC.../exec">
-        <div class="field-hint">Paste the URL from Step 3. It is saved in your browser so you only need to do this once.</div>
-        <div id="url-err" class="err">URL does not look right — it should start with https://script.google.com</div>
-        <div style="display:flex;gap:10px;flex-wrap:wrap;">
-          <button class="btn btn-red" onclick="saveAndConnect()">Connect &amp; generate voting link →</button>
-        </div>
-        <div class="gap-md"></div>
-        <div id="connected-section" style="display:none;">
-          <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
-            <span class="pill pill-green">✓ Connected</span>
+      </div>
+    </div>
+    <div class="step-card">
+      <div class="step-head">
+        <div class="step-num">4</div>
+        <div class="step-content">
+          <h3>Connect here</h3>
+          <p>Paste the Web App URL below.</p>
+          <div class="url-input-row" style="margin-top:14px">
+            <input type="url" id="urlInput" class="url-input" placeholder="https://script.google.com/macros/s/…/exec">
+            <button class="btn btn-primary" onclick="connectUrl()">Connect &amp; generate voting link →</button>
           </div>
-          <div class="txt-sm" style="margin-bottom:8px;">Share this link with participants:</div>
-          <div class="url-box" id="voting-link-display"></div>
-          <div style="display:flex;gap:8px;flex-wrap:wrap;">
-            <button class="btn btn-dark" onclick="copyVotingLink()">Copy voting link</button>
-            <button class="btn btn-red" onclick="show('s-dashboard');refreshVotes();">Go to Results Dashboard →</button>
+          <div id="urlError" class="url-error" style="display:none"></div>
+          <div id="urlSuccess" class="url-success" style="display:none">✓ Connected</div>
+          <div id="shareBox" class="share-box" style="display:none">
+            <div class="share-box-label">Share this link with participants:</div>
+            <div class="share-link-row">
+              <div class="share-link" id="shareLink"></div>
+              <button class="btn btn-ghost btn-sm" onclick="copyShareLink()">Copy voting link</button>
+            </div>
+            <div class="dashboard-link-row">
+              <button class="btn btn-light btn-sm" onclick="showResults()">Go to Results Dashboard →</button>
+            </div>
           </div>
-          <div class="ok-msg" id="link-copied">✓ Link copied</div>
         </div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- PARTICIPANT LANDING -->
-<div id="s-voting-landing" class="screen">
-  <div class="topbar"><div class="topbar-inner"><div class="brand">Amplifon</div><div class="topbar-sub">Participant — Enter session</div></div></div>
-  <div class="wrap">
-    <div class="card">
-      <div class="card-body" style="padding-top:36px;">
-        <p class="txt-sm" style="margin-bottom:14px;">The facilitator should have sent you a direct link. If you only have this file, ask the facilitator for the session link — it looks like this file's URL with <code style="font-family:monospace;background:var(--lite);padding:2px 5px;border-radius:4px;font-size:12px;color:var(--red);">?url=...</code> added at the end.</p>
-        <div class="field-label">Or paste the session URL here</div>
-        <input type="url" class="txt-input" id="manual-session-url" placeholder="https://...?url=https://script.google.com/...">
-        <div class="gap-sm"></div>
-        <button class="btn btn-red" onclick="loadFromManualUrl()">Open voting form →</button>
-      </div>
+<div class="page" id="pageEntry">
+  <div class="entry-body">
+    <h2>Participant — Enter session</h2>
+    <p>The facilitator should have sent you a direct link. If you only have this file, ask the facilitator for the session link.</p>
+    <hr style="border:none;border-top:1px solid #E2E0DE;margin:24px 0">
+    <p style="font-size:.84rem;color:#5C5C5C">Or paste the session URL here:</p>
+    <div class="entry-url-row">
+      <input type="url" id="entryUrl" class="url-input" placeholder="Paste session link here">
+      <button class="btn btn-primary" onclick="openVotingFromUrl()">Open voting form →</button>
     </div>
   </div>
 </div>
 
-<!-- VOTING -->
-<div id="s-voting" class="screen">
-  <div class="topbar">
-    <div class="topbar-inner"><div class="brand">Amplifon</div><div class="topbar-sub" id="v-prog-text">0 / 19 completed</div></div>
-    <div class="prog-bar"><div class="prog-fill" id="v-prog-fill" style="width:0%"></div></div>
+<div class="page" id="pageVoting">
+  <div class="vote-header">
+    <div class="progress-wrap">
+      <div class="progress-label">Progress</div>
+      <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+      <div class="progress-count" id="progressCount">Completed: <strong>0</strong> / 19</div>
+    </div>
+    <div style="font-size:.78rem;color:#5C5C5C">F — Frequency — how often &nbsp;|&nbsp; Q — Quality — how well</div>
   </div>
-  <div class="wrap">
-    <div class="card">
-      <div class="card-body">
-        <div class="scale-grid">
-          <div class="scale-box">
-            <div class="scale-title">F — Frequency — how often</div>
-            <div class="scale-item"><span class="snum">1</span>Never — does not happen</div>
-            <div class="scale-item"><span class="snum">2</span>Rarely — only when forced</div>
-            <div class="scale-item"><span class="snum">3</span>Often — most store visits</div>
-            <div class="scale-item"><span class="snum">4</span>Always — every visit</div>
-          </div>
-          <div class="scale-box">
-            <div class="scale-title">Q — Quality — how well</div>
-            <div class="scale-item"><span class="snum">1</span>Poor — vague, no impact</div>
-            <div class="scale-item"><span class="snum">2</span>Low — weak structure</div>
-            <div class="scale-item"><span class="snum">3</span>Good — specific, concrete</div>
-            <div class="scale-item"><span class="snum">4</span>High — precise, visible impact</div>
-          </div>
-        </div>
-        <div class="threshold"><strong>Threshold:</strong> combined score (F + Q) of <strong>7 or 8</strong> = done well. <strong>6 or below</strong> = gap → into COM-B analysis.</div>
+  <div class="vote-body">
+    <div class="scale-legend">
+      <div class="legend-col">
+        <div class="legend-title">F — Frequency — how often</div>
+        <div class="legend-row"><span class="legend-num">1</span><span class="legend-desc">Never — does not happen</span></div>
+        <div class="legend-row"><span class="legend-num">2</span><span class="legend-desc">Rarely — only when forced</span></div>
+        <div class="legend-row"><span class="legend-num">3</span><span class="legend-desc">Often — most store visits</span></div>
+        <div class="legend-row"><span class="legend-num">4</span><span class="legend-desc">Always — every visit</span></div>
+      </div>
+      <div class="legend-col">
+        <div class="legend-title">Q — Quality — how well</div>
+        <div class="legend-row"><span class="legend-num">1</span><span class="legend-desc">Poor — vague, no impact</span></div>
+        <div class="legend-row"><span class="legend-num">2</span><span class="legend-desc">Low — weak structure</span></div>
+        <div class="legend-row"><span class="legend-num">3</span><span class="legend-desc">Good — specific, concrete</span></div>
+        <div class="legend-row"><span class="legend-num">4</span><span class="legend-desc">High — precise, visible impact</span></div>
+      </div>
+      <div class="legend-col" style="min-width:180px">
+        <div class="legend-note"><strong>Threshold:</strong> combined score (F + Q) of <strong>7 or 8</strong> = done well. <strong>6 or below</strong> = gap → COM-B analysis.</div>
       </div>
     </div>
-    <div id="v-behaviours"></div>
-  </div>
-  <div class="sfooter"><div class="sfooter-inner">
-    <div class="sfooter-info">Completed: <strong id="v-done-count">0</strong> / 19<div class="dots" id="v-dots"></div></div>
-    <button class="btn btn-red" id="v-submit-btn" onclick="submitVotes()" disabled>Submit my votes →</button>
-  </div></div>
-</div>
-
-<!-- THANK YOU -->
-<div id="s-thankyou" class="screen">
-  <div class="topbar"><div class="topbar-inner"><div class="brand">Amplifon</div><div class="topbar-sub">Vote submitted</div></div></div>
-  <div class="wrap">
-    <div class="card">
-      <div class="ty-wrap">
-        <div class="ty-icon">✓</div>
-        <div class="ty-title">Vote submitted.</div>
-        <div class="ty-sub">Your ratings have been recorded. The facilitator will show the full ranking once everyone has voted. You can close this window.</div>
-      </div>
+    <div id="behaviourList"></div>
+    <div class="vote-submit-row">
+      <button class="btn btn-primary" id="submitBtn" onclick="submitVotes()" disabled>Submit my votes →</button>
+      <div class="vote-submit-note" id="submitNote">Rate all 19 behaviours to submit.</div>
     </div>
   </div>
 </div>
 
-<!-- DASHBOARD -->
-<div id="s-dashboard" class="screen">
-  <div class="topbar"><div class="topbar-inner"><div class="brand">Amplifon</div><div class="topbar-sub">Facilitator — Results Dashboard</div></div></div>
-  <div class="wrap">
-    <div class="card">
-      <div class="card-body">
-        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:14px;">
-          <div class="vcounter">
-            <div class="vcounter-num" id="dash-count">—</div>
-            <div class="vcounter-lbl">votes collected</div>
-          </div>
-          <div style="display:flex;gap:8px;flex-wrap:wrap;">
-            <button class="btn btn-outline" onclick="refreshVotes()">↻ Refresh</button>
-            <button class="btn btn-red" id="calc-btn" onclick="calculateAndShow()" disabled>Calculate ranking →</button>
-            <button class="btn btn-danger" onclick="openResetModal()">⚠ Reset all votes</button>
-          </div>
-        </div>
-        <div class="txt-sm" id="dash-refresh-time">Last refresh: —</div>
-        <div id="dash-spinner" class="loading" style="display:none;padding:14px 0;"><div class="spinner"></div>Loading votes…</div>
-        <div id="dash-err" class="err" style="margin-top:8px;">Could not reach the Google Sheet. Check your internet connection.</div>
-      </div>
-    </div>
-    <div id="results-panel" style="display:none;">
-      <div class="card">
-        <div class="results-hero"><div class="results-title">Behaviour Ranking</div><div class="results-meta" id="r-meta">—</div></div>
-        <div class="r-legend">
-          <div class="r-leg-item"><div class="r-leg-dot" style="background:var(--red)"></div>Gap — below 7 → COM-B</div>
-          <div class="r-leg-item"><div class="r-leg-dot" style="background:#D4A017"></div>★ Transformation (PO6, PO7)</div>
-          <div class="r-leg-item"><div class="r-leg-dot" style="background:var(--green)"></div>Done well — 7 or 8</div>
-        </div>
-        <div>
-          <div class="r-hdr"><div>#</div><div>Code</div><div>Behaviour</div><div style="text-align:center">Score</div><div style="text-align:center">Bar</div><div>Status</div></div>
-          <div id="r-rows"></div>
-        </div>
-        <div class="r-summary" id="r-summary"></div>
-      </div>
-    </div>
+<div class="page" id="pageSubmitted">
+  <div class="submitted-body">
+    <div class="submitted-icon">✓</div>
+    <h2>Vote submitted.</h2>
+    <p>Your ratings have been recorded. The facilitator will show the full ranking once everyone has voted. You can close this window.</p>
   </div>
 </div>
 
-<!-- RESET MODAL -->
-<div class="modal-overlay" id="reset-modal">
+<div class="page" id="pageResults">
+  <div class="results-body">
+    <div class="results-top">
+      <div>
+        <div class="results-title">Facilitator — Results Dashboard</div>
+        <div class="results-meta" id="resultsMeta">— votes collected</div>
+      </div>
+      <div class="results-actions">
+        <button class="btn btn-ghost btn-sm" onclick="loadResults()">↻ Refresh</button>
+        <button class="btn btn-light btn-sm" onclick="calcRanking()">Calculate ranking →</button>
+        <button class="btn btn-danger btn-sm" onclick="openResetModal()">⚠ Reset all votes</button>
+      </div>
+    </div>
+    <div class="results-legend">
+      <div class="rleg-item"><div class="rleg-dot dot-gap"></div>Gap — below 7 → COM-B</div>
+      <div class="rleg-item"><div class="rleg-dot dot-transf"></div>★ Transformation (PO6, PO7)</div>
+      <div class="rleg-item"><div class="rleg-dot dot-ok"></div>Done well — 7 or 8</div>
+    </div>
+    <div style="font-size:.78rem;color:#5C5C5C;margin-bottom:16px" id="lastRefresh">Last refresh: —</div>
+    <div id="resultsContent"><div class="no-votes">Loading votes…</div></div>
+  </div>
+</div>
+
+</div>
+
+<div class="modal-overlay" id="resetModal">
   <div class="modal">
-    <div class="modal-icon">⚠️</div>
+    <div class="modal-icon">⚠</div>
     <h3>Reset all votes?</h3>
-    <p>This will permanently delete every vote row from the Google Sheet. The header row is kept — the sheet stays connected.</p>
-    <div class="modal-warning">Cannot be undone. Export or screenshot the results first if you need a record of this session.</div>
+    <p>This will permanently delete every vote row from the Google Sheet.</p>
+    <div class="modal-warning">This cannot be undone. Export the results first if you need a record of this session.</div>
     <div class="modal-actions">
-      <button class="btn btn-outline" onclick="closeResetModal()">Cancel</button>
-      <button class="btn btn-danger" id="confirm-reset-btn" onclick="executeReset()">Yes, delete all votes</button>
+      <button class="btn btn-ghost" onclick="closeResetModal()">Cancel</button>
+      <button class="btn btn-danger" id="confirmResetBtn" onclick="executeReset()">Yes, delete all votes</button>
     </div>
-    <div class="reset-feedback" id="reset-feedback"></div>
+    <div class="reset-status" id="resetStatus"></div>
   </div>
 </div>
 
 <script>
-// ══════════════════════════════════════════════
-// 19 VERBATIM BEHAVIOURS — AM Great Profile
-// ══════════════════════════════════════════════
 const BEHAVIOURS = [
-  {id:'BD1',cat:'bd',text:'Takes responsibility of the results of the area'},
-  {id:'BD2',cat:'bd',text:'Starts from the analysis of the area and puts in place all possible actions to reach the forecasted results, leveraging on right staffing, efficient agenda management and maximized conversion opportunities, to achieve funnel optimization'},
-  {id:'BD3',cat:'bd',text:'Manages budget and workforce planning to ensure optimal territory coverage, while supporting talents attraction and recruiting process'},
-  {id:'BD4',cat:'bd',text:'Guarantees a continuous presence in store, turning data into actionable insights, setting SMART targets and communicating them clearly, while leveraging on Amplifon tools (Area Manager Toolkit, Store Visit, etc)'},
-  {id:'BD5',cat:'bd',text:'Matches the commercial potential and the needs of the area and applies critical thinking when identifying and pursuing business opportunities, proposing new store openings or relocations'},
-  {id:'BD6',cat:'bd',text:'Leads the implementation of key group sales initiatives and projects at area level'},
-  {id:'BD7',cat:'bd',text:'Timely spots and anticipates problems in the area and proactively provides strategic and operational insights to country central offices/Corporate'},
-  {id:'BD8',cat:'bd',text:'Guarantees the implementation of smooth store operations within compliance guidelines to support business'},
-  {id:'CC1',cat:'cc',text:'Role models for customer orientation as people and business Leader while performing store visits'},
-  {id:'CC2',cat:'cc',text:'Continuously reminds the Team the centricity of customer satisfaction'},
-  {id:'CC3',cat:'cc',text:'Leverages on their experience and what they see in other stores to cascade insights and trends in order to ensure client satisfaction along the whole journey'},
-  {id:'CC4',cat:'cc',text:'Ensures that the Customer experience is aligned in the area, in compliance with administrative procedures and Amplifon protocols (A360/NEXT)'},
-  {id:'PO1',cat:'po',text:'Supports the store Team in identifying winning behaviors to implement the action plan and understanding how these are aligned with the purpose'},
-  {id:'PO2',cat:'po',text:'Ensures people development during store visits through coaching, punctual feedback and active listening'},
-  {id:'PO3',cat:'po',text:'Spots development needs and identifies the proper training in partnership with the Field Trainer'},
-  {id:'PO4',cat:'po',text:'Guides the team in stressful situations/moments of uncertainty and empowers the people in store to take accountability'},
-  {id:'PO5',cat:'po',text:'Creates a culture of goal-oriented learning, growth and results celebration, keeping people motivated and supporting them in managing failures while leveraging on Team spirit.'},
-  {id:'PO6',cat:'tr',transf:true,text:'Represents Amplifon and takes ownership of the messages, acting as an enabler, connection and point of reference between country central offices/Corporate and stores, while aligning their team on Corporate directions and projects'},
-  {id:'PO7',cat:'tr',transf:true,text:'Enhances a solid network consolidating the relationship with ear, nose and throat specialists and General Practitioners and other third parties through regular visits and participation to conferences/events'},
+  { id:'BD1', cluster:'BD', label:'Business Driven', text:'Takes responsibility of the results of the area', transf:false, highlight:false },
+  { id:'BD2', cluster:'BD', label:'Business Driven', text:'Starts from the analysis of the area and puts in place all possible actions to reach the forecasted results, leveraging on right staffing, efficient agenda management and maximized conversion opportunities, to achieve funnel optimization', transf:false, highlight:false },
+  { id:'BD3', cluster:'BD', label:'Business Driven', text:'Manages budget and workforce planning to ensure optimal territory coverage, while supporting talents attraction and recruiting process', transf:false, highlight:false },
+  { id:'BD4', cluster:'BD', label:'Business Driven', text:'Guarantees a continuous presence in store, turning data into actionable insights, setting SMART targets and communicating them clearly, while leveraging on Amplifon tools (Area Manager Toolkit, Store Visit, etc)', transf:false, highlight:false },
+  { id:'BD5', cluster:'BD', label:'Business Driven', text:'Matches the commercial potential and the needs of the area and applies critical thinking when identifying and pursuing business opportunities, proposing new store openings or relocations', transf:false, highlight:false },
+  { id:'BD6', cluster:'BD', label:'Business Driven', text:'Leads the implementation of key group sales initiatives and projects at area level', transf:false, highlight:true },
+  { id:'BD7', cluster:'BD', label:'Business Driven', text:'Timely spots and anticipates problems in the area and proactively provides strategic and operational insights to country central offices/Corporate', transf:false, highlight:false },
+  { id:'BD8', cluster:'BD', label:'Business Driven', text:'Guarantees the implementation of smooth store operations within compliance guidelines to support business', transf:false, highlight:false },
+  { id:'CC1', cluster:'CC', label:'Customer Centred', text:'Role models for customer orientation as people and business Leader while performing store visits', transf:false, highlight:false },
+  { id:'CC2', cluster:'CC', label:'Customer Centred', text:'Continuously reminds the Team the centricity of customer satisfaction', transf:false, highlight:false },
+  { id:'CC3', cluster:'CC', label:'Customer Centred', text:'Leverages on their experience and what they see in other stores to cascade insights and trends in order to ensure client satisfaction along the whole journey', transf:false, highlight:false },
+  { id:'CC4', cluster:'CC', label:'Customer Centred', text:'Ensures that the Customer experience is aligned in the area, in compliance with administrative procedures and Amplifon protocols (A360/NEXT)', transf:false, highlight:false },
+  { id:'PO1', cluster:'PO', label:'People Oriented', text:'Supports the store Team in identifying winning behaviors to implement the action plan and understanding how these are aligned with the purpose', transf:false, highlight:false },
+  { id:'PO2', cluster:'PO', label:'People Oriented', text:'Ensures people development during store visits through coaching, punctual feedback and active listening', transf:false, highlight:false },
+  { id:'PO3', cluster:'PO', label:'People Oriented', text:'Spots development needs and identifies the proper training in partnership with the Field Trainer', transf:false, highlight:false },
+  { id:'PO4', cluster:'PO', label:'People Oriented', text:'Guides the team in stressful situations/moments of uncertainty and empowers the people in store to take accountability', transf:false, highlight:true },
+  { id:'PO5', cluster:'PO', label:'People Oriented', text:'Creates a culture of goal-oriented learning, growth and results celebration, keeping people motivated and supporting them in managing failures while leveraging on Team spirit.', transf:false, highlight:false },
+  { id:'PO6', cluster:'PO', label:'People Oriented', text:'Represents Amplifon and takes ownership of the messages, acting as an enabler, connection and point of reference between country central offices/Corporate and stores, while aligning their team on Corporate directions and projects', transf:true, highlight:true },
+  { id:'PO7', cluster:'PO', label:'People Oriented', text:'Enhances a solid network consolidating the relationship with ear, nose and throat specialists and General Practitioners and other third parties through regular visits and participation to conferences/events', transf:true, highlight:true },
 ];
 
-const CAT_LABELS={bd:'IS BUSINESS DRIVEN',cc:'IS CUSTOMER CENTERED',po:'IS PEOPLE ORIENTED',tr:'★ TRANSFORMATION'};
-const CAT_PILL  ={bd:'cl-bd',cc:'cl-cc',po:'cl-po',tr:'cl-tr'};
-const CAT_BID   ={bd:'bid-bd',cc:'bid-cc',po:'bid-po',tr:'bid-tr'};
-const CAT_COLORS={bd:'var(--blue)',cc:'var(--amber)',po:'var(--green)',tr:'#D4A017'};
-const CAT_BG    ={bd:'var(--blue-bg)',cc:'var(--amber-bg)',po:'var(--green-bg)',tr:'var(--gold-bg)'};
+let scriptUrl = localStorage.getItem('amplifon_script_url') || '';
+let votes = {};
+let allResults = [];
 
-let scriptUrl = localStorage.getItem('amplifon_script_url') || 'https://script.google.com/macros/s/AKfycbyfry3WcX46a91rh5LctVsELi4dLHyCSuqx4SbnAlnr8c1WzxC50qiqvDLDtet2Q28/exec';
-let localRatings = {};
-let cachedVotes = [];
-
-function show(id){
-  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById(id).classList.add('active');
+  updateTopbar(id);
   window.scrollTo(0,0);
 }
 
-function init(){
-  const params = new URLSearchParams(window.location.search);
-  const urlParam = params.get('url');
-  if(urlParam){
-    scriptUrl = urlParam;
-    buildVotingUI();
-    show('s-voting');
+function updateTopbar(pageId) {
+  const r = document.getElementById('topbarRight');
+  r.innerHTML = '';
+  if (pageId !== 'pageLanding') {
+    const b = document.createElement('button');
+    b.className = 'btn btn-outline btn-sm';
+    b.textContent = '← Back';
+    b.onclick = () => showPage('pageLanding');
+    r.appendChild(b);
+  }
+}
+
+function copyCode() {
+  const code = document.getElementById('appsScriptCode').textContent;
+  navigator.clipboard.writeText(code).then(() => {
+    const btn = document.querySelector('.code-copy-btn');
+    btn.textContent = '✓ Copied to clipboard';
+    setTimeout(() => btn.textContent = 'Copy', 2000);
+  });
+}
+
+function connectUrl() {
+  const val = document.getElementById('urlInput').value.trim();
+  const err = document.getElementById('urlError');
+  const ok  = document.getElementById('urlSuccess');
+  const box = document.getElementById('shareBox');
+  err.style.display = 'none';
+  ok.style.display  = 'none';
+  box.style.display = 'none';
+  if (!val.startsWith('https://script.google.com')) {
+    err.textContent = 'URL does not look right — it should start with https://script.google.com';
+    err.style.display = 'block';
     return;
   }
-  if(scriptUrl){
-    const inp = document.getElementById('script-url-input');
-    if(inp) inp.value = scriptUrl;
-    showConnected(scriptUrl);
-  }
+  scriptUrl = val;
+  localStorage.setItem('amplifon_script_url', val);
+  ok.style.display = 'block';
+  const voteLink = window.location.href.split('?')[0] + '?url=' + encodeURIComponent(val);
+  document.getElementById('shareLink').textContent = voteLink;
+  box.style.display = 'block';
 }
 
-function copyScript(){
-  const code = document.getElementById('apps-script-code').textContent;
-  navigator.clipboard.writeText(code).then(()=>{
-    const btn = document.getElementById('copy-script-btn');
-    btn.textContent='✓ Copied';
-    const msg = document.getElementById('script-copied');
-    msg.style.display='block';
-    setTimeout(()=>{ btn.textContent='Copy'; msg.style.display='none'; },2500);
+function copyShareLink() {
+  const link = document.getElementById('shareLink').textContent;
+  navigator.clipboard.writeText(link).then(() => {
+    const btn = document.querySelectorAll('#shareBox .btn')[0];
+    const orig = btn.textContent;
+    btn.textContent = '✓ Link copied';
+    setTimeout(() => btn.textContent = orig, 2000);
   });
 }
 
-function saveAndConnect(){
-  const inp = document.getElementById('script-url-input');
-  const url = inp.value.trim();
-  const err = document.getElementById('url-err');
-  err.style.display='none';
-  if(!url.startsWith('https://script.google.com')){ err.style.display='block'; return; }
-  scriptUrl = url;
-  localStorage.setItem('amplifon_script_url', url);
-  showConnected(url);
+function showResults() {
+  showPage('pageResults');
+  loadResults();
 }
 
-function showConnected(url){
-  const votingUrl = `${window.location.origin}${window.location.pathname}?url=${encodeURIComponent(url)}`;
-  const display = document.getElementById('voting-link-display');
-  if(display) display.textContent = votingUrl;
-  const section = document.getElementById('connected-section');
-  if(section) section.style.display='block';
-}
-
-function copyVotingLink(){
-  const url = document.getElementById('voting-link-display').textContent;
-  navigator.clipboard.writeText(url).then(()=>{
-    const msg = document.getElementById('link-copied');
-    msg.style.display='block';
-    setTimeout(()=>msg.style.display='none',2500);
-  });
-}
-
-function loadFromManualUrl(){
-  const val = document.getElementById('manual-session-url').value.trim();
-  try{
-    const u = new URL(val);
-    const extracted = u.searchParams.get('url');
-    if(extracted && extracted.startsWith('https://script.google.com')){
-      scriptUrl = extracted; buildVotingUI(); show('s-voting'); return;
+function buildVotingForm() {
+  const list = document.getElementById('behaviourList');
+  list.innerHTML = '';
+  let lastCluster = null;
+  BEHAVIOURS.forEach(b => {
+    if (b.cluster !== lastCluster) {
+      lastCluster = b.cluster;
+      const div = document.createElement('div');
+      div.className = 'cluster-divider';
+      const pillClass = b.cluster === 'BD' ? 'pill-bd' : b.cluster === 'CC' ? 'pill-cc' : 'pill-po';
+      div.innerHTML = `<div class="cluster-pill ${pillClass}">${b.label}</div><div class="cluster-line"></div>`;
+      list.appendChild(div);
     }
-  }catch(e){}
-  if(val.startsWith('https://script.google.com')){ scriptUrl=val; buildVotingUI(); show('s-voting'); return; }
-  alert('Could not find a valid session URL. Ask the facilitator for the link.');
-}
-
-function buildVotingUI(){
-  const container = document.getElementById('v-behaviours');
-  container.innerHTML='';
-  document.getElementById('v-dots').innerHTML = BEHAVIOURS.map(b=>`<div class="dot" id="dot-${b.id}"></div>`).join('');
-  const clusters={};
-  BEHAVIOURS.forEach(b=>{ if(!clusters[b.cat])clusters[b.cat]=[]; clusters[b.cat].push(b); });
-  Object.entries(clusters).forEach(([cat,list])=>{
-    const sec=document.createElement('div');
-    sec.innerHTML=`<div class="cl-head"><span class="cl-pill ${CAT_PILL[cat]}">${CAT_LABELS[cat]}</span></div>`;
-    list.forEach(b=>{
-      const card=document.createElement('div');
-      card.className=`bcard${b.transf?' is-tr':''}`;
-      card.id=`bcard-${b.id}`;
-      card.innerHTML=`
-        <div class="bcard-top">
-          <span class="bid ${CAT_BID[b.cat]}">${b.id}</span>
-          <div><div class="btext">${b.text}</div>${b.transf?'<span class="tr-tag">★ Transformation</span>':''}</div>
+    const card = document.createElement('div');
+    card.className = 'bcard' + (b.highlight ? ' important' : '');
+    card.id = 'card_' + b.id;
+    card.innerHTML = `
+      <div class="bcard-top">
+        <div class="bcard-id">${b.id}</div>
+        <div class="bcard-text">${b.text}${b.transf ? '<span class="bcard-transf">★ Transformation</span>' : ''}</div>
+      </div>
+      <div class="bcard-scales">
+        <div class="scale-group">
+          <div class="scale-group-label">F — Frequency</div>
+          <div class="scale-btns" id="f_${b.id}">
+            ${[1,2,3,4].map(n => `<button class="sbtn" onclick="setScale('${b.id}','f',${n})">${n}</button>`).join('')}
+          </div>
         </div>
-        <div class="rating-grid">
-          <div><div class="rg-label">F — Frequency</div>
-            <div class="rbts">${[1,2,3,4].map(v=>`<button class="rbt" id="f-${b.id}-${v}" onclick="rate('${b.id}','f',${v})">${v}</button>`).join('')}</div>
+        <div class="scale-group">
+          <div class="scale-group-label">Q — Quality</div>
+          <div class="scale-btns" id="q_${b.id}">
+            ${[1,2,3,4].map(n => `<button class="sbtn" onclick="setScale('${b.id}','q',${n})">${n}</button>`).join('')}
           </div>
-          <div><div class="rg-label">Q — Quality</div>
-            <div class="rbts">${[1,2,3,4].map(v=>`<button class="rbt" id="q-${b.id}-${v}" onclick="rate('${b.id}','q',${v})">${v}</button>`).join('')}</div>
-          </div>
-        </div>`;
-      sec.appendChild(card);
-    });
-    container.appendChild(sec);
+        </div>
+      </div>`;
+    list.appendChild(card);
   });
 }
 
-function rate(id,dim,val){
-  if(!localRatings[id])localRatings[id]={};
-  localRatings[id][dim]=val;
-  [1,2,3,4].forEach(v=>{ const b=document.getElementById(`${dim}-${id}-${v}`); if(b)b.classList.toggle('sel',v===val); });
-  const r=localRatings[id];
-  if(r.f&&r.q) document.getElementById(`bcard-${id}`)?.classList.add('complete');
+function setScale(id, dim, val) {
+  if (!votes[id]) votes[id] = {};
+  votes[id][dim] = val;
+  const row = document.querySelectorAll(`#${dim}_${id} .sbtn`);
+  row.forEach((btn, i) => btn.classList.toggle('sel', i + 1 === val));
+  const card = document.getElementById('card_' + id);
+  const v = votes[id];
+  if (v.f && v.q) card.classList.add('rated');
   updateProgress();
 }
 
-function updateProgress(){
-  let done=0;
-  BEHAVIOURS.forEach(b=>{
-    const r=localRatings[b.id];
-    const ok=r&&r.f&&r.q, partial=r&&(r.f||r.q);
-    const dot=document.getElementById(`dot-${b.id}`);
-    if(dot){ dot.classList.toggle('done',!!ok); dot.classList.toggle('partial',!ok&&!!partial); }
-    if(ok) done++;
+function updateProgress() {
+  const done = BEHAVIOURS.filter(b => votes[b.id] && votes[b.id].f && votes[b.id].q).length;
+  const total = BEHAVIOURS.length;
+  const pct = (done / total) * 100;
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressCount').innerHTML = `Completed: <strong>${done}</strong> / ${total}`;
+  const submitBtn = document.getElementById('submitBtn');
+  const submitNote = document.getElementById('submitNote');
+  if (done === total) {
+    submitBtn.disabled = false;
+    submitNote.textContent = 'All done — submit when ready.';
+  } else {
+    submitBtn.disabled = true;
+    submitNote.textContent = `Rate all ${total} behaviours to submit.`;
+  }
+}
+
+async function submitVotes() {
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true;
+  btn.textContent = 'Submitting…';
+  const payload = { votes: BEHAVIOURS.map(b => ({ id: b.id, f: votes[b.id].f, q: votes[b.id].q })) };
+  try {
+    await fetch(scriptUrl, { method: 'POST', body: JSON.stringify(payload) });
+  } catch(e) {}
+  showPage('pageSubmitted');
+}
+
+async function loadResults() {
+  const content = document.getElementById('resultsContent');
+  content.innerHTML = '<div class="no-votes">Loading votes…</div>';
+  document.getElementById('lastRefresh').textContent = 'Loading…';
+  try {
+    const res = await fetch(scriptUrl + '?t=' + Date.now());
+    const data = await res.json();
+    if (!data.ok) throw new Error(data.error);
+    allResults = data.votes || [];
+    document.getElementById('resultsMeta').textContent = `${allResults.length} vote${allResults.length !== 1 ? 's' : ''} collected`;
+    document.getElementById('lastRefresh').textContent = 'Last refresh: ' + new Date().toLocaleTimeString();
+    if (allResults.length === 0) {
+      content.innerHTML = '<div class="no-votes">No votes yet. Share the voting link with participants.</div>';
+    } else {
+      content.innerHTML = '<div class="no-votes">Votes loaded. Click <strong>Calculate ranking →</strong> to see the table.</div>';
+    }
+  } catch(e) {
+    document.getElementById('lastRefresh').textContent = 'Last refresh: failed';
+    content.innerHTML = '<div class="no-votes" style="color:#991B1B">Could not reach the Google Sheet. Check your internet connection.</div>';
+  }
+}
+
+function calcRanking() {
+  if (allResults.length === 0) {
+    document.getElementById('resultsContent').innerHTML = '<div class="no-votes">No votes yet.</div>';
+    return;
+  }
+  const sums = {};
+  const counts = {};
+  BEHAVIOURS.forEach(b => { sums[b.id] = 0; counts[b.id] = 0; });
+  allResults.forEach(voteSet => {
+    voteSet.forEach(v => {
+      if (sums[v.id] !== undefined) {
+        sums[v.id] += (v.f || 0) + (v.q || 0);
+        counts[v.id]++;
+      }
+    });
   });
-  document.getElementById('v-done-count').textContent=done;
-  document.getElementById('v-prog-text').textContent=`${done} / 19 completed`;
-  document.getElementById('v-prog-fill').style.width=`${(done/19)*100}%`;
-  document.getElementById('v-submit-btn').disabled=done<19;
+  const ranked = BEHAVIOURS.map(b => ({
+    ...b,
+    avg: counts[b.id] > 0 ? sums[b.id] / counts[b.id] : 0
+  })).sort((a, b) => a.avg - b.avg);
+
+  let html = `
+    <div style="font-size:.78rem;color:#5C5C5C;margin-bottom:10px">Ranked lowest → highest average (F+Q). Lower = bigger gap.</div>
+    <table class="rtable">
+      <thead><tr>
+        <th>#</th><th>Code</th><th>Behaviour</th><th>Avg Score</th><th>Bar</th><th>Status</th>
+      </tr></thead><tbody>`;
+
+  ranked.forEach((b, i) => {
+    const isGap = b.avg < 7;
+    const rowClass = b.transf ? 'row-transf' : isGap ? 'row-gap' : 'row-ok';
+    const badgeClass = isGap ? 'badge-gap' : 'badge-ok';
+    const barPct = Math.round((b.avg / 8) * 100);
+    const barClass = isGap ? '' : 'green';
+    let statusHtml;
+    if (b.transf && isGap) {
+      statusHtml = `<span class="status-pill status-transf">★ Transformation — Gap</span>`;
+    } else if (b.transf) {
+      statusHtml = `<span class="status-pill status-transf">★ Transformation</span>`;
+    } else if (isGap) {
+      statusHtml = `<span class="status-pill status-gap">Gap → COM-B</span>`;
+    } else {
+      statusHtml = `<span class="status-pill status-ok">Done well</span>`;
+    }
+    html += `<tr class="${rowClass}">
+      <td><span class="rank-num">${i+1}</span></td>
+      <td><span class="bcode">${b.id}</span></td>
+      <td><span class="btext-cell">${b.text.length > 90 ? b.text.substring(0,88)+'…' : b.text}</span></td>
+      <td><span class="score-badge ${badgeClass}">${b.avg > 0 ? b.avg.toFixed(1) : '—'}</span></td>
+      <td><div class="bar-wrap"><div class="bar-inner"><div class="bar-fill ${barClass}" style="width:${barPct}%"></div></div></div></td>
+      <td>${statusHtml}</td>
+    </tr>`;
+  });
+  html += '</tbody></table>';
+  document.getElementById('resultsContent').innerHTML = html;
 }
 
-// SUBMIT — no-cors required for Google Apps Script POST from external origin
-async function submitVotes(){
-  const btn=document.getElementById('v-submit-btn');
-  btn.disabled=true; btn.textContent='Submitting…';
-  const vote={};
-  BEHAVIOURS.forEach(b=>{ vote[b.id]=localRatings[b.id]; });
-  try{
-    await fetch(scriptUrl,{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({votes:vote}),
-      mode:'no-cors'
+function openResetModal() {
+  const status = document.getElementById('resetStatus');
+  status.style.display = 'none';
+  document.getElementById('confirmResetBtn').disabled = false;
+  document.getElementById('confirmResetBtn').textContent = 'Yes, delete all votes';
+  document.getElementById('resetModal').classList.add('open');
+}
+
+function closeResetModal() {
+  document.getElementById('resetModal').classList.remove('open');
+}
+
+async function executeReset() {
+  const btn = document.getElementById('confirmResetBtn');
+  const status = document.getElementById('resetStatus');
+  btn.disabled = true;
+  btn.textContent = 'Deleting…';
+  status.style.display = 'none';
+  try {
+    const res = await fetch(scriptUrl, {
+      method: 'POST',
+      body: JSON.stringify({ action: 'reset' })
     });
-    show('s-thankyou');
-  }catch(e){
-    btn.disabled=false; btn.textContent='Submit my votes →';
-    alert('Could not submit. Please check your internet connection and try again.');
+    const data = await res.json();
+    if (!data.ok) throw new Error(data.error || 'Unknown error');
+    allResults = [];
+    document.getElementById('resultsMeta').textContent = '0 votes collected';
+    document.getElementById('resultsContent').innerHTML = '<div class="no-votes">All votes deleted. Ready for the next session.</div>';
+    status.className = 'reset-status reset-ok';
+    status.textContent = '✓ All votes have been deleted from the Google Sheet.';
+    status.style.display = 'block';
+    btn.textContent = '✓ Done';
+    setTimeout(() => closeResetModal(), 2200);
+  } catch(e) {
+    status.className = 'reset-status reset-err';
+    status.textContent = 'Could not reach the Google Sheet. Check the connection and try again.';
+    status.style.display = 'block';
+    btn.disabled = false;
+    btn.textContent = 'Yes, delete all votes';
   }
 }
 
-async function refreshVotes(){
-  const spinner=document.getElementById('dash-spinner');
-  const err=document.getElementById('dash-err');
-  const calcBtn=document.getElementById('calc-btn');
-  spinner.style.display='block'; err.style.display='none';
-  try{
-    const r=await fetch(scriptUrl+'?t='+Date.now());
-    const data=await r.json();
-    cachedVotes=data.votes||[];
-    document.getElementById('dash-count').textContent=cachedVotes.length;
-    document.getElementById('dash-refresh-time').textContent='Last refresh: '+new Date().toLocaleTimeString();
-    calcBtn.disabled=cachedVotes.length===0;
-  }catch(e){
-    err.style.display='block';
-    document.getElementById('dash-refresh-time').textContent='Refresh failed.';
+document.getElementById('resetModal').addEventListener('click', function(e) {
+  if (e.target === this) closeResetModal();
+});
+
+function openVotingFromUrl() {
+  const val = document.getElementById('entryUrl').value.trim();
+  if (!val) return;
+  try {
+    const u = new URL(val);
+    const su = u.searchParams.get('url');
+    if (su) {
+      scriptUrl = decodeURIComponent(su);
+      startVoting();
+    }
+  } catch(e) {}
+}
+
+function startVoting() {
+  votes = {};
+  buildVotingForm();
+  updateProgress();
+  showPage('pageVoting');
+}
+
+(function init() {
+  const params = new URLSearchParams(window.location.search);
+  const urlParam = params.get('url');
+  if (urlParam) {
+    scriptUrl = decodeURIComponent(urlParam);
+    startVoting();
+    return;
   }
-  spinner.style.display='none';
-}
-
-function calculateAndShow(){
-  const votes=cachedVotes; if(!votes.length)return;
-  const n=votes.length;
-  const results=BEHAVIOURS.map(b=>{
-    let sF=0,sQ=0;
-    votes.forEach(v=>{ sF+=(v[b.id]?.f||0); sQ+=(v[b.id]?.q||0); });
-    const avgF=sF/n, avgQ=sQ/n, combined=avgF+avgQ;
-    return{...b,avgF:Math.round(avgF*10)/10,avgQ:Math.round(avgQ*10)/10,combined:Math.round(combined*10)/10,isGap:combined<7};
-  }).sort((a,b)=>a.combined-b.combined);
-
-  const gapCount=results.filter(b=>b.isGap).length;
-  document.getElementById('r-meta').textContent=
-    `${n} participant${n!==1?'s':''}  ·  ${gapCount} behaviour${gapCount!==1?'s':''} below threshold  ·  Bottom 6 → Canvas COM-B`;
-
-  document.getElementById('r-rows').innerHTML=results.map((b,i)=>{
-    const isTop6=i<6&&b.isGap;
-    const rowCls=b.isGap?'gap':'well';
-    const rankCls=b.isGap?'gap':'';
-    const scoreCls=b.isGap?'gap':'well';
-    const pct=Math.round((b.combined/8)*100);
-    let tag='';
-    if(isTop6&&b.transf) tag=`<span class="r-tag tag-tr">★ COM-B</span>`;
-    else if(isTop6)       tag=`<span class="r-tag tag-comb">→ COM-B</span>`;
-    else if(b.isGap)      tag=`<span class="r-tag tag-comb" style="opacity:.5">Gap</span>`;
-    else                  tag=`<span class="r-tag tag-well">✓ Done well</span>`;
-    return`<div class="r-row ${rowCls}">
-      <div class="r-rank ${rankCls}">${i+1}</div>
-      <div class="r-code" style="background:${CAT_BG[b.cat]};color:${CAT_COLORS[b.cat]}">${b.id}</div>
-      <div class="r-name">${b.transf?'<span class="r-tr-mark">★ </span>':''}${b.text.length>85?b.text.substring(0,83)+'…':b.text}</div>
-      <div class="r-score ${scoreCls}">${b.combined.toFixed(1)}</div>
-      <div><div class="r-bar-track"><div class="r-bar-fill ${b.isGap?'fill-gap':'fill-well'}" style="width:${pct}%"></div></div></div>
-      <div>${tag}</div>
-    </div>`;
-  }).join('');
-
-  const doneCount=results.filter(b=>!b.isGap).length;
-  const transfGap=results.filter(b=>b.isGap&&b.transf).length;
-  document.getElementById('r-summary').innerHTML=`
-    <div class="r-stat"><span class="r-stat-num" style="color:var(--red)">${gapCount}</span><span class="r-stat-label">Behaviours with gap</span></div>
-    <div class="r-stat"><span class="r-stat-num" style="color:var(--green)">${doneCount}</span><span class="r-stat-label">Done well (≥7)</span></div>
-    <div class="r-stat"><span class="r-stat-num" style="color:#D4A017">${transfGap}</span><span class="r-stat-label">Transformation gaps</span></div>
-    <div class="r-stat"><span class="r-stat-num">${n}</span><span class="r-stat-label">Participants</span></div>`;
-  document.getElementById('results-panel').style.display='block';
-  document.getElementById('results-panel').scrollIntoView({behavior:'smooth'});
-}
-
-// RESET — facilitator dashboard only
-// Uses no-cors → response is opaque → success handled optimistically
-function openResetModal(){
-  const fb=document.getElementById('reset-feedback');
-  fb.style.display='none'; fb.textContent='';
-  const btn=document.getElementById('confirm-reset-btn');
-  btn.disabled=false; btn.textContent='Yes, delete all votes';
-  document.getElementById('reset-modal').classList.add('open');
-}
-
-function closeResetModal(){
-  document.getElementById('reset-modal').classList.remove('open');
-}
-
-async function executeReset(){
-  const btn=document.getElementById('confirm-reset-btn');
-  const fb=document.getElementById('reset-feedback');
-  btn.disabled=true; btn.textContent='Deleting…';
-  fb.style.display='none';
-  try{
-    await fetch(scriptUrl,{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({action:'reset'}),
-      mode:'no-cors'
-    });
-    // Optimistic — no-cors returns opaque response, action executes server-side
-    cachedVotes=[];
-    document.getElementById('dash-count').textContent='0';
-    document.getElementById('calc-btn').disabled=true;
-    document.getElementById('results-panel').style.display='none';
-    document.getElementById('dash-refresh-time').textContent='Reset at '+new Date().toLocaleTimeString();
-    fb.className='reset-feedback reset-ok';
-    fb.textContent='✓ Reset sent. All vote rows deleted from the sheet. Ready for the next session.';
-    fb.style.display='block';
-    btn.textContent='✓ Done';
-    setTimeout(()=>closeResetModal(),2400);
-  }catch(e){
-    fb.className='reset-feedback reset-err';
-    fb.textContent='Could not reach the Google Sheet. Check your connection and try again.';
-    fb.style.display='block';
-    btn.disabled=false; btn.textContent='Yes, delete all votes';
+  const mode = params.get('mode');
+  if (mode === 'results' && scriptUrl) {
+    showPage('pageResults');
+    loadResults();
+    return;
   }
-}
-
-document.getElementById('reset-modal').addEventListener('click',function(e){ if(e.target===this)closeResetModal(); });
-window.addEventListener('DOMContentLoaded',init);
+  if (scriptUrl) {
+    const input = document.getElementById('urlInput');
+    if (input) input.value = scriptUrl;
+  }
+})();
 </script>
 </body>
 </html>
